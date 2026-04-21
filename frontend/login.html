@@ -149,8 +149,8 @@
                 
                 if (res.ok) {
                     const result = await res.json();
-                    // 保存 token
-                    localStorage.setItem('a2ui_token', btoa(JSON.stringify(result)));
+                    // 保存 token (使用 encodeURIComponent 处理中文)
+                    localStorage.setItem('a2ui_token', encodeURIComponent(JSON.stringify(result)));
                     
                     // 跳转到管理后台
                     window.location.href = 'admin.html';

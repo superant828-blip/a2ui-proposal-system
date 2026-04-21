@@ -236,7 +236,7 @@
                 return null;
             }
             try {
-                return JSON.parse(atob(token));
+                return JSON.parse(decodeURIComponent(token));
             } catch {
                 window.location.href = 'login.html';
                 return null;

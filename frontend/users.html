@@ -278,7 +278,7 @@
                 return null;
             }
             try {
-                const user = JSON.parse(atob(token));
+                const user = JSON.parse(decodeURIComponent(token));
                 if (user.role !== 'admin') {
                     alert('需要管理员权限');
                     window.location.href = 'admin.html';
@@ -299,7 +299,7 @@
         // 获取当前登录信息
         function getAuth() {
             const token = localStorage.getItem('a2ui_token');
-            return token ? JSON.parse(atob(token)) : null;
+            return token ? JSON.parse(decodeURIComponent(token)) : null;
         }
         
         // 检查登录
