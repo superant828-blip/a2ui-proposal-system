@@ -522,8 +522,9 @@ async def upload_attachment(proposal_id: int, file: UploadFile = File(...), user
         conn.close()
         raise HTTPException(status_code=404, detail="提案不存在")
     
-    # 保存文件
-    filename = f"{proposal_id}_{datetime.now().timestamp()}_{file.filename}"
+    # 保存文件 - 安全过滤文件名
+    safe_name = "".join(c for c in file.filename if c.isalnum() or c in "._- ")
+    filename = f"{proposal_id}_{datetime.now().timestamp()}_{safe_name}"
     filepath = os.path.join(UPLOAD_DIR, filename)
     
     content = await file.read()
