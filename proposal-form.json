@@ -1,0 +1,232 @@
+{
+  "surfaceUpdate": {
+    "surfaceId": "proposal-system",
+    "components": [
+      {
+        "id": "root",
+        "component": {
+          "Column": {
+            "children": {
+              "explicitList": ["header", "form", "submitBtn", "status"]
+            },
+            "gap": "16px",
+            "padding": "24px"
+          }
+        }
+      },
+      {
+        "id": "header",
+        "component": {
+          "Column": {
+            "children": {
+              "explicitList": ["title", "subtitle"]
+            },
+            "gap": "8px"
+          }
+        }
+      },
+      {
+        "id": "title",
+        "component": {
+          "Text": {
+            "text": {
+              "literalString": "📋 改善提案收集系统"
+            },
+            "usageHint": "h1",
+            "color": "#ffffff",
+            "fontSize": "24px",
+            "fontWeight": "600"
+          }
+        }
+      },
+      {
+        "id": "subtitle",
+        "component": {
+          "Text": {
+            "text": {
+              "literalString": "提交您的改善提案，共同优化工作流程"
+            },
+            "usageHint": "body",
+            "color": "#9ca3af",
+            "fontSize": "14px"
+          }
+        }
+      },
+      {
+        "id": "form",
+        "component": {
+          "Column": {
+            "children": {
+              "explicitList": ["titleInput", "typeSelect", "descInput", "effectInput"]
+            },
+            "gap": "16px"
+          }
+        }
+      },
+      {
+        "id": "titleInput",
+        "component": {
+          "Column": {
+            "children": {
+              "explicitList": ["titleLabel", "titleField"]
+            },
+            "gap": "6px"
+          }
+        }
+      },
+      {
+        "id": "titleLabel",
+        "component": {
+          "Text": {
+            "text": {
+              "literalString": "提案标题 *"
+            },
+            "usageHint": "label",
+            "color": "#e5e7eb",
+            "fontSize": "13px",
+            "fontWeight": "500"
+          }
+        }
+      },
+      {
+        "id": "titleField",
+        "component": {
+          "TextField": {
+            "placeholder": "请输入提案标题",
+            "value": "",
+            "maxLength": 100
+          }
+        }
+      },
+      {
+        "id": "typeSelect",
+        "component": {
+          "Column": {
+            "children": {
+              "explicitList": ["typeLabel", "typeField"]
+            },
+            "gap": "6px"
+          }
+        }
+      },
+      {
+        "id": "typeLabel",
+        "component": {
+          "Text": {
+            "text": {
+              "literalString": "提案类型 *"
+            },
+            "usageHint": "label",
+            "color": "#e5e7eb",
+            "fontSize": "13px",
+            "fontWeight": "500"
+          }
+        }
+      },
+      {
+        "id": "typeField",
+        "component": {
+          "TextField": {
+            "placeholder": "例如：流程优化、工具改进、文档完善",
+            "value": "",
+            "maxLength": 50
+          }
+        }
+      },
+      {
+        "id": "descInput",
+        "component": {
+          "Column": {
+            "children": {
+              "explicitList": ["descLabel", "descField"]
+            },
+            "gap": "6px"
+          }
+        }
+      },
+      {
+        "id": "descLabel",
+        "component": {
+          "Text": {
+            "text": {
+              "literalString": "问题描述 *"
+            },
+            "usageHint": "label",
+            "color": "#e5e7eb",
+            "fontSize": "13px",
+            "fontWeight": "500"
+          }
+        }
+      },
+      {
+        "id": "descField",
+        "component": {
+          "TextField": {
+            "placeholder": "描述当前存在的问题或痛点",
+            "value": "",
+            "maxLength": 500
+          }
+        }
+      },
+      {
+        "id": "effectInput",
+        "component": {
+          "Column": {
+            "children": {
+              "explicitList": ["effectLabel", "effectField"]
+            },
+            "gap": "6px"
+          }
+        }
+      },
+      {
+        "id": "effectLabel",
+        "component": {
+          "Text": {
+            "text": {
+              "literalString": "预期效果"
+            },
+            "usageHint": "label",
+            "color": "#e5e7eb",
+            "fontSize": "13px",
+            "fontWeight": "500"
+          }
+        }
+      },
+      {
+        "id": "effectField",
+        "component": {
+          "TextField": {
+            "placeholder": "描述提案实施后的预期效果",
+            "value": "",
+            "maxLength": 300
+          }
+        }
+      },
+      {
+        "id": "submitBtn",
+        "component": {
+          "Button": {
+            "text": "提交提案",
+            "variant": "primary",
+            "fullWidth": true
+          }
+        }
+      },
+      {
+        "id": "status",
+        "component": {
+          "Text": {
+            "text": {
+              "literalString": ""
+            },
+            "usageHint": "body",
+            "color": "#10b981",
+            "fontSize": "14px",
+            "textAlign": "center"
+          }
+        }
+      }
+    ]
+  }
+}

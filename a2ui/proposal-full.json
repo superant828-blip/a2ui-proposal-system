@@ -1,0 +1,63 @@
+{
+  "surfaceUpdate": {
+    "surfaceId": "proposal-full",
+    "components": [
+      {"id": "root", "component": {"Column": {"children": {"explicitList": ["header", "statsRow", "tabRow", "content"]}, "gap": "20px", "padding": "24px"}}},
+      {"id": "header", "component": {"Column": {"children": {"explicitList": ["titleRow"]}, "gap": "8px"}}},
+      {"id": "titleRow", "component": {"Column": {"children": {"explicitList": ["title", "subtitle"]}, "direction": "row", "justifyContent": "space-between", "alignItems": "center"}}},
+      {"id": "title", "component": {"Text": {"text": {"literalString": "💡 改善提案系统"}, "usageHint": "h1", "color": "#ffffff", "fontSize": "24px", "fontWeight": "700"}}},
+      {"id": "subtitle", "component": {"Text": {"text": {"literalString": "让每个声音都被听见"}, "color": "#9ca3af", "fontSize": "14px"}}},
+      
+      {"id": "statsRow", "component": {"Column": {"children": {"explicitList": ["stat1", "stat2", "stat3", "stat4"]}, "direction": "row", "gap": "16px"}}},
+      {"id": "stat1", "component": {"Column": {"children": {"explicitList": ["stat1Num", "stat1Label"]}, "padding": "16px", "backgroundColor": "rgba(59,130,246,0.15)", "borderRadius": "12px", "gap": "4px", "flex": "1"}}},
+      {"id": "stat1Num", "component": {"Text": {"text": {"literalString": "24"}, "color": "#3b82f6", "fontSize": "28px", "fontWeight": "700"}}},
+      {"id": "stat1Label", "component": {"Text": {"text": {"literalString": "总提案"}, "color": "#9ca3af", "fontSize": "12px"}}},
+      
+      {"id": "stat2", "component": {"Column": {"children": {"explicitList": ["stat2Num", "stat2Label"]}, "padding": "16px", "backgroundColor": "rgba(245,158,11,0.15)", "borderRadius": "12px", "gap": "4px", "flex": "1"}}},
+      {"id": "stat2Num", "component": {"Text": {"text": {"literalString": "8"}, "color": "#f59e0b", "fontSize": "28px", "fontWeight": "700"}}},
+      {"id": "stat2Label", "component": {"Text": {"text": {"literalString": "审核中"}, "color": "#9ca3af", "fontSize": "12px"}}},
+      
+      {"id": "stat3", "component": {"Column": {"children": {"explicitList": ["stat3Num", "stat3Label"]}, "padding": "16px", "backgroundColor": "rgba(16,185,129,0.15)", "borderRadius": "12px", "gap": "4px", "flex": "1"}}},
+      {"id": "stat3Num", "component": {"Text": {"text": {"literalString": "12"}, "color": "#10b981", "fontSize": "28px", "fontWeight": "700"}}},
+      {"id": "stat3Label", "component": {"Text": {"text": {"literalString": "已采纳"}, "color": "#9ca3af", "fontSize": "12px"}}},
+      
+      {"id": "stat4", "component": {"Column": {"children": {"explicitList": ["stat4Num", "stat4Label"]}, "padding": "16px", "backgroundColor": "rgba(139,92,246,0.15)", "borderRadius": "12px", "gap": "4px", "flex": "1"}}},
+      {"id": "stat4Num", "component": {"Text": {"text": {"literalString": "5"}, "color": "#8b5cf6", "fontSize": "28px", "fontWeight": "700"}}},
+      {"id": "stat4Label", "component": {"Text": {"text": {"literalString": "已完成"}, "color": "#9ca3af", "fontSize": "12px"}}},
+      
+      {"id": "tabRow", "component": {"Column": {"children": {"explicitList": ["tabs"]}, "gap": "8px"}}},
+      {"id": "tabs", "component": {"Column": {"children": {"explicitList": ["tab1", "tab2", "tab3"]}, "direction": "row", "gap": "12px"}}},
+      {"id": "tab1", "component": {"Button": {"text": "📝 提交提案", "variant": "primary"}}},
+      {"id": "tab2", "component": {"Button": {"text": "📋 我的提案", "variant": "secondary"}}},
+      {"id": "tab3", "component": {"Button": {"text": "📊 数据看板", "variant": "secondary"}}},
+      
+      {"id": "content", "component": {"Column": {"children": {"explicitList": ["proposalList"]}, "gap": "12px", "flex": "1", "overflow": "auto"}}},
+      {"id": "proposalList", "component": {"Column": {"children": {"explicitList": ["item1", "item2", "item3"]}, "gap": "12px"}}},
+      
+      {"id": "item1", "component": {"Column": {"children": {"explicitList": ["item1Header", "item1Body", "item1Footer"]}, "padding": "16px", "backgroundColor": "rgba(255,255,255,0.05)", "borderRadius": "12px", "gap": "12px"}}},
+      {"id": "item1Header", "component": {"Column": {"children": {"explicitList": ["item1Title", "item1Status"]}, "direction": "row", "justifyContent": "space-between", "alignItems": "center"}}},
+      {"id": "item1Title", "component": {"Text": {"text": {"literalString": "优化代码审查流程"}, "color": "#ffffff", "fontSize": "16px", "fontWeight": "600"}}},
+      {"id": "item1Status", "component": {"Text": {"text": {"literalString": "✅ 已完成"}, "color": "#10b981", "fontSize": "12px", "backgroundColor": "rgba(16,185,129,0.2)", "padding": "4px 8px", "borderRadius": "6px"}}},
+      {"id": "item1Body", "component": {"Text": {"text": {"literalString": "当前代码审查流程耗时较长，建议引入自动化工具..."}, "color": "#9ca3af", "fontSize": "14px"}}},
+      {"id": "item1Footer", "component": {"Column": {"children": {"explicitList": ["item1Meta"]}, "direction": "row", "justifyContent": "space-between"}}},
+      {"id": "item1Meta", "component": {"Text": {"text": {"literalString": "🔄 流程优化 · 提交于 2026-04-15 · 张三"}, "color": "#6b7280", "fontSize": "12px"}}},
+      
+      {"id": "item2", "component": {"Column": {"children": {"explicitList": ["item2Header", "item2Body", "item2Footer"]}, "padding": "16px", "backgroundColor": "rgba(255,255,255,0.05)", "borderRadius": "12px", "gap": "12px"}}},
+      {"id": "item2Header", "component": {"Column": {"children": {"explicitList": ["item2Title", "item2Status"]}, "direction": "row", "justifyContent": "space-between", "alignItems": "center"}}},
+      {"id": "item2Title", "component": {"Text": {"text": {"literalString": "升级开发环境依赖"}, "color": "#ffffff", "fontSize": "16px", "fontWeight": "600"}}},
+      {"id": "item2Status", "component": {"Text": {"text": {"literalString": "⏳ 审核中"}, "color": "#f59e0b", "fontSize": "12px", "backgroundColor": "rgba(245,158,11,0.2)", "padding": "4px 8px", "borderRadius": "6px"}}},
+      {"id": "item2Body", "component": {"Text": {"text": {"literalString": "建议将 Node.js 版本升级到最新 LTS..."}, "color": "#9ca3af", "fontSize": "14px"}}},
+      {"id": "item2Footer", "component": {"Column": {"children": {"explicitList": ["item2Meta"]}, "direction": "row", "justifyContent": "space-between"}}},
+      {"id": "item2Meta", "component": {"Text": {"text": {"literalString": "🛠️ 工具改进 · 提交于 2026-04-18 · 李四"}, "color": "#6b7280", "fontSize": "12px"}}},
+      
+      {"id": "item3", "component": {"Column": {"children": {"explicitList": ["item3Header", "item3Body", "item3Footer"]}, "padding": "16px", "backgroundColor": "rgba(255,255,255,0.05)", "borderRadius": "12px", "gap": "12px"}}},
+      {"id": "item3Header", "component": {"Column": {"children": {"explicitList": ["item3Title", "item3Status"]}, "direction": "row", "justifyContent": "space-between", "alignItems": "center"}}},
+      {"id": "item3Title", "component": {"Text": {"text": {"literalString": "完善技术文档"}, "color": "#ffffff", "fontSize": "16px", "fontWeight": "600"}}},
+      {"id": "item3Status", "component": {"Text": {"text": {"literalString": "📋 待审核"}, "color": "#6b7280", "fontSize": "12px", "backgroundColor": "rgba(107,114,128,0.2)", "padding": "4px 8px", "borderRadius": "6px"}}},
+      {"id": "item3Body", "component": {"Text": {"text": {"literalString": "建议增加 API 接口文档和代码注释规范..."}, "color": "#9ca3af", "fontSize": "14px"}}},
+      {"id": "item3Footer", "component": {"Column": {"children": {"explicitList": ["item3Meta"]}, "direction": "row", "justifyContent": "space-between"}}},
+      {"id": "item3Meta", "component": {"Text": {"text": {"literalString": "📝 文档完善 · 提交于 2026-04-20 · 王五"}, "color": "#6b7280", "fontSize": "12px"}}}
+    ]
+  },
+  "beginRendering": {"surfaceId": "proposal-full", "root": "root"}
+}

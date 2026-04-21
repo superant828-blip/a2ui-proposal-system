@@ -1,0 +1,423 @@
+{
+  "surfaceUpdate": {
+    "surfaceId": "proposal-v2",
+    "components": [
+      {
+        "id": "root",
+        "component": {
+          "Column": {
+            "children": {
+              "explicitList": ["header", "tabs", "content", "footer"]
+            },
+            "gap": "20px",
+            "padding": "24px",
+            "width": "100%"
+          }
+        }
+      },
+      {
+        "id": "header",
+        "component": {
+          "Column": {
+            "children": {
+              "explicitList": ["logo", "title", "stats"]
+            },
+            "gap": "12px",
+            "alignItems": "flex-start"
+          }
+        }
+      },
+      {
+        "id": "logo",
+        "component": {
+          "Text": {
+            "text": {
+              "literalString": "💡"
+            },
+            "fontSize": "32px"
+          }
+        }
+      },
+      {
+        "id": "title",
+        "component": {
+          "Text": {
+            "text": {
+              "literalString": "改善提案收集系统"
+            },
+            "usageHint": "h1",
+            "color": "#ffffff",
+            "fontSize": "28px",
+            "fontWeight": "700"
+          }
+        }
+      },
+      {
+        "id": "stats",
+        "component": {
+          "Column": {
+            "children": {
+              "explicitList": ["statRow"]
+            },
+            "gap": "8px"
+          }
+        }
+      },
+      {
+        "id": "statRow",
+        "component": {
+          "Column": {
+            "children": {
+              "explicitList": ["stat1", "stat2", "stat3"]
+            },
+            "direction": "row",
+            "gap": "24px"
+          }
+        }
+      },
+      {
+        "id": "stat1",
+        "component": {
+          "Column": {
+            "children": {
+              "explicitList": ["stat1Num", "stat1Label"]
+            },
+            "gap": "2px"
+          }
+        }
+      },
+      {
+        "id": "stat1Num",
+        "component": {
+          "Text": {
+            "text": {
+              "literalString": "12"
+            },
+            "color": "#3b82f6",
+            "fontSize": "24px",
+            "fontWeight": "700"
+          }
+        }
+      },
+      {
+        "id": "stat1Label",
+        "component": {
+          "Text": {
+            "text": {
+              "literalString": "已提交"
+            },
+            "color": "#9ca3af",
+            "fontSize": "12px"
+          }
+        }
+      },
+      {
+        "id": "stat2",
+        "component": {
+          "Column": {
+            "children": {
+              "explicitList": ["stat2Num", "stat2Label"]
+            },
+            "gap": "2px"
+          }
+        }
+      },
+      {
+        "id": "stat2Num",
+        "component": {
+          "Text": {
+            "text": {
+              "literalString": "3"
+            },
+            "color": "#f59e0b",
+            "fontSize": "24px",
+            "fontWeight": "700"
+          }
+        }
+      },
+      {
+        "id": "stat2Label",
+        "component": {
+          "Text": {
+            "text": {
+              "literalString": "审核中"
+            },
+            "color": "#9ca3af",
+            "fontSize": "12px"
+          }
+        }
+      },
+      {
+        "id": "stat3",
+        "component": {
+          "Column": {
+            "children": {
+              "explicitList": ["stat3Num", "stat3Label"]
+            },
+            "gap": "2px"
+          }
+        }
+      },
+      {
+        "id": "stat3Num",
+        "component": {
+          "Text": {
+            "text": {
+              "literalString": "5"
+            },
+            "color": "#10b981",
+            "fontSize": "24px",
+            "fontWeight": "700"
+          }
+        }
+      },
+      {
+        "id": "stat3Label",
+        "component": {
+          "Text": {
+            "text": {
+              "literalString": "已采纳"
+            },
+            "color": "#9ca3af",
+            "fontSize": "12px"
+          }
+        }
+      },
+      {
+        "id": "tabs",
+        "component": {
+          "Column": {
+            "children": {
+              "explicitList": ["tabRow"]
+            },
+            "gap": "8px"
+          }
+        }
+      },
+      {
+        "id": "tabRow",
+        "component": {
+          "Column": {
+            "children": {
+              "explicitList": ["tab1", "tab2"]
+            },
+            "direction": "row",
+            "gap": "12px"
+          }
+        }
+      },
+      {
+        "id": "tab1",
+        "component": {
+          "Button": {
+            "text": "📝 提交提案",
+            "variant": "primary"
+          }
+        }
+      },
+      {
+        "id": "tab2",
+        "component": {
+          "Button": {
+            "text": "📋 我的提案",
+            "variant": "secondary"
+          }
+        }
+      },
+      {
+        "id": "content",
+        "component": {
+          "Column": {
+            "children": {
+              "explicitList": ["formTitle", "field1", "field2", "field3", "field4", "submitBtn"]
+            },
+            "gap": "16px",
+            "padding": "20px",
+            "backgroundColor": "rgba(255,255,255,0.05)",
+            "borderRadius": "12px"
+          }
+        }
+      },
+      {
+        "id": "formTitle",
+        "component": {
+          "Text": {
+            "text": {
+              "literalString": "填写提案信息"
+            },
+            "usageHint": "h2",
+            "color": "#ffffff",
+            "fontSize": "18px",
+            "fontWeight": "600"
+          }
+        }
+      },
+      {
+        "id": "field1",
+        "component": {
+          "Column": {
+            "children": {
+              "explicitList": ["field1Label", "field1Input"]
+            },
+            "gap": "6px"
+          }
+        }
+      },
+      {
+        "id": "field1Label",
+        "component": {
+          "Text": {
+            "text": {
+              "literalString": "提案标题"
+            },
+            "color": "#d1d5db",
+            "fontSize": "13px"
+          }
+        }
+      },
+      {
+        "id": "field1Input",
+        "component": {
+          "TextField": {
+            "placeholder": "简洁描述提案核心",
+            "value": ""
+          }
+        }
+      },
+      {
+        "id": "field2",
+        "component": {
+          "Column": {
+            "children": {
+              "explicitList": ["field2Label", "field2Input"]
+            },
+            "gap": "6px"
+          }
+        }
+      },
+      {
+        "id": "field2Label",
+        "component": {
+          "Text": {
+            "text": {
+              "literalString": "提案类型"
+            },
+            "color": "#d1d5db",
+            "fontSize": "13px"
+          }
+        }
+      },
+      {
+        "id": "field2Input",
+        "component": {
+          "TextField": {
+            "placeholder": "流程优化 | 工具改进 | 文档完善 | 环境改善 | 其他",
+            "value": ""
+          }
+        }
+      },
+      {
+        "id": "field3",
+        "component": {
+          "Column": {
+            "children": {
+              "explicitList": ["field3Label", "field3Input"]
+            },
+            "gap": "6px"
+          }
+        }
+      },
+      {
+        "id": "field3Label",
+        "component": {
+          "Text": {
+            "text": {
+              "literalString": "问题描述 (当前痛点)"
+            },
+            "color": "#d1d5db",
+            "fontSize": "13px"
+          }
+        }
+      },
+      {
+        "id": "field3Input",
+        "component": {
+          "TextField": {
+            "placeholder": "详细描述存在的问题",
+            "value": ""
+          }
+        }
+      },
+      {
+        "id": "field4",
+        "component": {
+          "Column": {
+            "children": {
+              "explicitList": ["field4Label", "field4Input"]
+            },
+            "gap": "6px"
+          }
+        }
+      },
+      {
+        "id": "field4Label",
+        "component": {
+          "Text": {
+            "text": {
+              "literalString": "建议方案 (改善方法)"
+            },
+            "color": "#d1d5db",
+            "fontSize": "13px"
+          }
+        }
+      },
+      {
+        "id": "field4Input",
+        "component": {
+          "TextField": {
+            "placeholder": "描述你的改善建议",
+            "value": ""
+          }
+        }
+      },
+      {
+        "id": "submitBtn",
+        "component": {
+          "Column": {
+            "children": {
+              "explicitList": ["submitBtnInner"]
+            },
+            "gap": "12px"
+          }
+        }
+      },
+      {
+        "id": "submitBtnInner",
+        "component": {
+          "Button": {
+            "text": "🚀 提交提案",
+            "variant": "primary",
+            "fullWidth": true
+          }
+        }
+      },
+      {
+        "id": "footer",
+        "component": {
+          "Text": {
+            "text": {
+              "literalString": "© 2026 改善提案系统 · 让每个声音都被听见"
+            },
+            "color": "#6b7280",
+            "fontSize": "12px",
+            "textAlign": "center"
+          }
+        }
+      }
+    ]
+  },
+  "beginRendering": {
+    "surfaceId": "proposal-v2",
+    "root": "root"
+  }
+}
