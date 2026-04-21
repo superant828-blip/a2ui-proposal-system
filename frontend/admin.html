@@ -3,700 +3,267 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>💡 提案管理后台</title>
+    <title>📋 管理后台 - 改善提案系统</title>
+    <link rel="stylesheet" href="css/theme.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            min-height: 100vh;
-            color: #fff;
-        }
-        
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 24px;
-        }
-        
-        /* Nav Bar */
-        .nav-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 24px;
-            background: rgba(255,255,255,0.05);
-            border-radius: 12px;
-            margin-bottom: 24px;
-        }
-        
-        .nav-brand { font-size: 18px; font-weight: 700; }
-        
-        .nav-links { display: flex; gap: 16px; }
-        
-        .nav-link {
-            padding: 8px 16px;
-            color: #9ca3af;
-            text-decoration: none;
-            border-radius: 6px;
-            font-size: 14px;
-            transition: all 0.2s;
-        }
-        
-        .nav-link:hover { background: rgba(255,255,255,0.1); color: #fff; }
-        .nav-link.primary { background: #3b82f6; color: #fff; }
-        
-        .nav-user { display: flex; align-items: center; gap: 12px; }
-        .nav-user span { color: #9ca3af; font-size: 13px; }
-        
-        .nav-btn {
-            padding: 6px 12px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 12px;
-            background: rgba(255,255,255,0.1);
-            color: #9ca3af;
-        }
-        .nav-btn:hover { background: rgba(255,255,255,0.2); color: #fff; }
-        
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
-        }
-        
-        .header h1 {
-            font-size: 24px;
-        }
-        
-        .back-btn {
-            padding: 8px 16px;
-            background: rgba(255,255,255,0.1);
-            color: #fff;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-        }
-        
-        /* Stats */
-        .stats-row {
-            display: grid;
-            grid-template-columns: repeat(6, 1fr);
-            gap: 12px;
-            margin-bottom: 24px;
-        }
-        
-        .stat-card {
-            background: rgba(255,255,255,0.05);
-            border-radius: 8px;
-            padding: 16px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        
-        .stat-card:hover, .stat-card.active {
-            background: rgba(59,130,246,0.2);
-        }
-        
-        .stat-card .num {
-            font-size: 24px;
-            font-weight: 700;
-        }
-        
-        .stat-card .label {
-            color: #9ca3af;
-            font-size: 12px;
-            margin-top: 4px;
-        }
-        
-        /* Filter */
-        .filter-bar {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-        
-        .filter-btn {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 13px;
-            background: rgba(255,255,255,0.1);
-            color: #9ca3af;
-            transition: all 0.2s;
-        }
-        
-        .filter-btn:hover, .filter-btn.active {
-            background: #3b82f6;
-            color: #fff;
-        }
-        
-        /* Proposal List */
-        .proposal-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        
-        .proposal-table th,
-        .proposal-table td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-        
-        .proposal-table th {
-            background: rgba(255,255,255,0.05);
-            font-weight: 600;
-            font-size: 13px;
-            color: #9ca3af;
-        }
-        
-        .proposal-table tr:hover {
-            background: rgba(255,255,255,0.02);
-        }
-        
-        .proposal-table td {
-            font-size: 14px;
-        }
-        
-        .title-cell {
-            max-width: 250px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-        
-        /* Status Badge */
-        .status-badge {
-            padding: 4px 10px;
-            border-radius: 4px;
-            font-size: 12px;
-            display: inline-block;
-        }
-        
-        .status-badge.pending { background: rgba(107,114,128,0.2); color: #9ca3af; }
-        .status-badge.reviewing { background: rgba(245,158,11,0.2); color: #f59e0b; }
-        .status-badge.approved { background: rgba(59,130,246,0.2); color: #3b82f6; }
-        .status-badge.completed { background: rgba(16,185,129,0.2); color: #10b981; }
-        .status-badge.rejected { background: rgba(239,68,68,0.2); color: #ef4444; }
-        
-        /* Priority */
-        .priority-badge {
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-size: 11px;
-        }
-        
-        .priority-badge.high { background: rgba(239,68,68,0.2); color: #ef4444; }
-        .priority-badge.normal { background: rgba(59,130,246,0.2); color: #3b82f6; }
-        .priority-badge.low { background: rgba(107,114,128,0.2); color: #9ca3af; }
-        
-        /* Actions */
-        .action-btns {
-            display: flex;
-            gap: 8px;
-        }
-        
-        .action-btn {
-            padding: 6px 12px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 12px;
-            transition: all 0.2s;
-        }
-        
-        .action-btn.review { background: rgba(245,158,11,0.2); color: #f59e0b; }
-        .action-btn.approve { background: rgba(59,130,246,0.2); color: #3b82f6; }
-        .action-btn.complete { background: rgba(16,185,129,0.2); color: #10b981; }
-        .action-btn.reject { background: rgba(239,68,68,0.2); color: #ef4444; }
-        .action-btn.delete { background: rgba(239,68,68,0.2); color: #ef4444; }
-        
-        .action-btn:hover {
-            opacity: 0.8;
-        }
-        
-        /* Modal */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.7);
-            z-index: 100;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .modal-overlay.active {
-            display: flex;
-        }
-        
-        .modal {
-            background: #1a1a2e;
-            border-radius: 12px;
-            padding: 24px;
-            max-width: 600px;
-            width: 90%;
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-        
-        .modal h2 {
-            margin-bottom: 16px;
-            font-size: 18px;
-        }
-        
-        .modal-field {
-            margin-bottom: 12px;
-        }
-        
-        .modal-field label {
-            display: block;
-            color: #9ca3af;
-            font-size: 12px;
-            margin-bottom: 4px;
-        }
-        
-        .modal-field .value {
-            font-size: 14px;
-        }
-        
-        .modal-actions {
-            display: flex;
-            gap: 12px;
-            margin-top: 20px;
-        }
-        
-        .modal-btn {
-            flex: 1;
-            padding: 10px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 14px;
-        }
-        
-        .modal-btn.primary { background: #3b82f6; color: #fff; }
-        .modal-btn.secondary { background: rgba(255,255,255,0.1); color: #fff; }
-        
-        /* Toast */
-        .toast {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 12px 20px;
-            border-radius: 6px;
-            color: #fff;
-            font-size: 14px;
-            z-index: 1000;
-            animation: slideIn 0.3s ease;
-        }
-        
-        .toast.success { background: #10b981; }
-        .toast.error { background: #ef4444; }
-        
-        @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-        
-        .empty-state {
-            text-align: center;
-            padding: 48px;
-            color: #9ca3af;
-        }
-        
-        @media (max-width: 768px) {
-            .stats-row {
-                grid-template-columns: repeat(3, 1fr);
-            }
-            
-            .proposal-table {
-                display: block;
-                overflow-x: auto;
-            }
-        }
+        .filter-bar { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+        .filter-bar .form-select { max-width: 150px; }
+        .proposal-card { padding: 16px; margin-bottom: 12px; }
+        .proposal-card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; flex-wrap: wrap; gap: 8px; }
+        .proposal-title { font-size: 16px; font-weight: 600; }
+        .proposal-meta { color: var(--color-text-muted); font-size: 12px; display: flex; gap: 12px; flex-wrap: wrap; }
+        .proposal-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+        .score-input { width: 60px; padding: 4px 8px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 4px; color: var(--color-text); }
+        .comment-section { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border-color); }
+        .comment-item { padding: 8px 0; border-bottom: 1px solid var(--border-color); }
+        .comment-form { display: flex; gap: 8px; margin-top: 12px; }
+        .comment-form input { flex: 1; }
     </style>
 </head>
 <body>
     <div class="container">
-    <!-- Navigation -->
-    <nav class="nav-bar">
-        <div class="nav-brand">💡 改善提案系统</div>
-        <div class="nav-links">
-            <a href="index.html" class="nav-link">🏠 首页</a>
-            <a href="admin.html" class="nav-link primary">📋 管理后台</a>
-            <a href="stats.html" class="nav-link">📊 数据看板</a>
-            <a href="users.html" class="nav-link">👥 用户管理</a>
-        </div>
-        <div class="nav-user">
-            <span id="user-display"></span>
-            <button class="nav-btn" onclick="logout()">退出</button>
-        </div>
-    </nav>
-        <div class="header">
-            <h1>💡 提案管理后台</h1>
-            <button class="back-btn" onclick="window.location.href='index.html'">← 返回前台</button>
+        <nav class="nav-bar">
+            <div class="nav-brand">💡 改善提案系统</div>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">🏠 首页</a>
+                <a href="admin.html" class="nav-link active">📋 管理后台</a>
+                <a href="stats.html" class="nav-link">📊 数据看板</a>
+                <a href="users.html" class="nav-link">👥 用户管理</a>
+            </div>
+            <div class="nav-user">
+                <span id="user-display"></span>
+                <button class="nav-btn" onclick="logout()">退出</button>
+            </div>
+        </nav>
+        
+        <!-- 统计 -->
+        <div class="stats-grid" style="margin-bottom: 24px;">
+            <div class="stat-card blue"><div class="num" id="stat-total">0</div><div class="label">总提案</div></div>
+            <div class="stat-card orange"><div class="num" id="stat-pending">0</div><div class="label">待审核</div></div>
+            <div class="stat-card green"><div class="num" id="stat-approved">0</div><div class="label">已采纳</div></div>
+            <div class="stat-card purple"><div class="num" id="stat-completed">0</div><div class="label">已完成</div></div>
         </div>
         
-        <!-- Stats -->
-        <div class="stats-row">
-            <div class="stat-card active" onclick="filterByStatus('')">
-                <div class="num" id="stat-total">0</div>
-                <div class="label">全部</div>
-            </div>
-            <div class="stat-card" onclick="filterByStatus('pending')">
-                <div class="num" id="stat-pending">0</div>
-                <div class="label">待审核</div>
-            </div>
-            <div class="stat-card" onclick="filterByStatus('reviewing')">
-                <div class="num" id="stat-reviewing">0</div>
-                <div class="label">审核中</div>
-            </div>
-            <div class="stat-card" onclick="filterByStatus('approved')">
-                <div class="num" id="stat-approved">0</div>
-                <div class="label">已采纳</div>
-            </div>
-            <div class="stat-card" onclick="filterByStatus('completed')">
-                <div class="num" id="stat-completed">0</div>
-                <div class="label">已完成</div>
-            </div>
-            <div class="stat-card" onclick="filterByStatus('rejected')">
-                <div class="num" id="stat-rejected">0</div>
-                <div class="label">已拒绝</div>
-            </div>
+        <!-- 筛选 -->
+        <div class="filter-bar">
+            <select id="filter-status" class="form-select" onchange="loadProposals()">
+                <option value="">全部状态</option>
+                <option value="pending">待审核</option>
+                <option value="reviewing">审核中</option>
+                <option value="approved">已采纳</option>
+                <option value="completed">已完成</option>
+                <option value="rejected">已拒绝</option>
+            </select>
+            <select id="filter-category" class="form-select" onchange="loadProposals()">
+                <option value="">全部分类</option>
+                <option value="流程优化">流程优化</option>
+                <option value="工具改进">工具改进</option>
+                <option value="文档完善">文档完善</option>
+                <option value="环境改善">环境改善</option>
+                <option value="其他">其他</option>
+            </select>
+            <select id="filter-sentiment" class="form-select" onchange="loadProposals()">
+                <option value="">全部情感</option>
+                <option value="positive">正面 😊</option>
+                <option value="neutral">中立 😐</option>
+                <option value="negative">负面 😔</option>
+            </select>
+            <input type="text" id="search-input" class="form-input" placeholder="搜索..." style="max-width:200px;" oninput="debounceSearch()">
         </div>
         
-        <!-- Proposal Table -->
-        <table class="proposal-table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>标题</th>
-                    <th>分类</th>
-                    <th>提交人</th>
-                    <th>状态</th>
-                    <th>优先级</th>
-                    <th>提交时间</th>
-                    <th>操作</th>
-                </tr>
-            </thead>
-            <tbody id="proposal-tbody">
-                <tr><td colspan="8" class="empty-state">加载中...</td></tr>
-            </tbody>
-        </table>
+        <!-- 提案列表 -->
+        <div id="proposal-list">
+            <div class="empty-state">加载中...</div>
+        </div>
     </div>
     
-    <!-- Detail Modal -->
+    <!-- 详情 Modal -->
     <div class="modal-overlay" id="detail-modal">
-        <div class="modal">
-            <h2>提案详情</h2>
+        <div class="modal" style="max-width:700px;">
+            <h2 class="modal-title" id="modal-title">提案详情</h2>
             <div id="modal-content"></div>
             <div class="modal-actions">
-                <button class="modal-btn secondary" onclick="closeModal()">关闭</button>
-                <button class="modal-btn primary" id="modal-action-btn" onclick="doAction()">处理</button>
+                <button class="modal-btn modal-btn-secondary" onclick="closeDetailModal()">关闭</button>
+                <button class="modal-btn modal-btn-primary" id="modal-action-btn">处理</button>
             </div>
         </div>
     </div>
     
+    <script src="js/utils.js"></script>
     <script>
-        const API_BASE = window.location.origin.replace(':8005', ':8004');
         let proposals = [];
-        let currentFilter = '';
         let currentProposal = null;
+        let searchTimeout = null;
         
-        // 检查登录状态
-        function checkAuth() {
-            const token = localStorage.getItem('a2ui_token');
-            if (!token) {
-                window.location.href = 'login.html';
-                return null;
-            }
-            try {
-                return JSON.parse(decodeURIComponent(token));
-            } catch {
-                window.location.href = 'login.html';
-                return null;
+        // 检查登录
+        requireAuth();
+        
+        // 初始化
+        function initUserDisplay() {
+            const user = parseToken();
+            const userDisplay = document.getElementById('user-display');
+            if (user && userDisplay) {
+                userDisplay.textContent = (user.display_name || user.username) + ' (' + user.role + ')';
             }
         }
+        initUserDisplay();
         
-        // 页面加载时检查
-        checkAuth();
-        
-        // Load proposals
-        async function loadProposals() {
-            try {
-                const res = await fetch(`${API_BASE}/api/proposals`);
-                proposals = await res.json();
-                updateStats();
-                renderTable();
-            } catch (e) {
-                console.error(e);
-            }
-        }
-        
-        // Update stats
-        function updateStats() {
-            const stats = {
-                total: proposals.length,
-                pending: proposals.filter(p => p.status === 'pending').length,
-                reviewing: proposals.filter(p => p.status === 'reviewing').length,
-                approved: proposals.filter(p => p.status === 'approved').length,
-                completed: proposals.filter(p => p.status === 'completed').length,
-                rejected: proposals.filter(p => p.status === 'rejected').length
-            };
-            
-            document.getElementById('stat-total').textContent = stats.total;
-            document.getElementById('stat-pending').textContent = stats.pending;
-            document.getElementById('stat-reviewing').textContent = stats.reviewing;
-            document.getElementById('stat-approved').textContent = stats.approved;
-            document.getElementById('stat-completed').textContent = stats.completed;
-            document.getElementById('stat-rejected').textContent = stats.rejected;
-        }
-        
-        // Render table
-        function renderTable() {
-            const tbody = document.getElementById('proposal-tbody');
-            const filtered = currentFilter 
-                ? proposals.filter(p => p.status === currentFilter)
-                : proposals;
-            
-            if (filtered.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="8" class="empty-state">暂无数据</td></tr>';
-                return;
-            }
-            
-            const statusMap = {
-                'pending': '待审核',
-                'reviewing': '审核中',
-                'approved': '已采纳',
-                'completed': '已完成',
-                'rejected': '已拒绝'
-            };
-            
-            tbody.innerHTML = filtered.map(p => `
-                <tr>
-                    <td>${p.id}</td>
-                    <td class="title-cell" title="${escapeHtml(p.title)}">${escapeHtml(p.title)}</td>
-                    <td>${p.category}</td>
-                    <td>${p.submitter || '匿名'}</td>
-                    <td><span class="status-badge ${p.status}">${statusMap[p.status]}</span></td>
-                    <td><span class="priority-badge ${p.priority}">${p.priority === 'high' ? '高' : p.priority === 'low' ? '低' : '普通'}</span></td>
-                    <td>${p.created_at ? p.created_at.substring(0, 10) : ''}</td>
-                    <td class="action-btns">
-                        <button class="action-btn review" onclick="viewProposal(${p.id})">查看</button>
-                        ${p.status === 'pending' ? `<button class="action-btn review" onclick="updateStatus(${p.id}, 'reviewing')">审核</button>` : ''}
-                        ${p.status === 'reviewing' ? `<button class="action-btn approve" onclick="updateStatus(${p.id}, 'approved')">采纳</button>
-                        <button class="action-btn reject" onclick="updateStatus(${p.id}, 'rejected')">拒绝</button>` : ''}
-                        ${p.status === 'approved' ? `<button class="action-btn complete" onclick="updateStatus(${p.id}, 'completed')">完成</button>` : ''}
-                        <button class="action-btn delete" onclick="deleteProposal(${p.id})">删除</button>
-                    </td>
-                </tr>
-            `).join('');
-        }
-        
-        // Filter
-        function filterByStatus(status) {
-            currentFilter = status;
-            document.querySelectorAll('.stat-card').forEach(card => card.classList.remove('active'));
-            event.target.closest('.stat-card').classList.add('active');
-            renderTable();
-        }
-        
-        // View proposal
-        function viewProposal(id) {
-            currentProposal = proposals.find(p => p.id === id);
-            if (!currentProposal) return;
-            
-            const statusMap = {
-                'pending': '待审核',
-                'reviewing': '审核中',
-                'approved': '已采纳',
-                'completed': '已完成',
-                'rejected': '已拒绝'
-            };
-            
-            document.getElementById('modal-content').innerHTML = `
-                <div class="modal-field">
-                    <label>标题</label>
-                    <div class="value">${escapeHtml(currentProposal.title)}</div>
-                </div>
-                <div class="modal-field">
-                    <label>分类</label>
-                    <div class="value">${currentProposal.category}</div>
-                </div>
-                <div class="modal-field">
-                    <label>问题描述</label>
-                    <div class="value">${escapeHtml(currentProposal.problem_desc || '无')}</div>
-                </div>
-                <div class="modal-field">
-                    <label>解决方案</label>
-                    <div class="value">${escapeHtml(currentProposal.solution || '无')}</div>
-                </div>
-                <div class="modal-field">
-                    <label>预期效果</label>
-                    <div class="value">${escapeHtml(currentProposal.expected_effect || '无')}</div>
-                </div>
-                <div class="modal-field">
-                    <label>提交人</label>
-                    <div class="value">${currentProposal.submitter || '匿名'}</div>
-                </div>
-                <div class="modal-field">
-                    <label>提交时间</label>
-                    <div class="value">${currentProposal.created_at || ''}</div>
-                </div>
-            `;
-            
-            document.getElementById('detail-modal').classList.add('active');
-        }
-        
-        // Close modal
-        function closeModal() {
-            document.getElementById('detail-modal').classList.remove('active');
-        }
-        
-        // Do action - 根据状态处理提案
-        function doAction() {
-            if (!currentProposal) return;
-            
-            const status = currentProposal.status;
-            let newStatus = '';
-            
-            if (status === 'pending') {
-                newStatus = 'reviewing';
-            } else if (status === 'reviewing') {
-                newStatus = 'approved';
-            } else if (status === 'approved') {
-                newStatus = 'completed';
-            } else {
-                showToast('当前状态无法处理', 'error');
-                return;
-            }
-            
-            updateStatus(currentProposal.id, newStatus);
-            closeModal();
-        }
-        
-        // Update status
-        async function updateStatus(id, status) {
-            const token = localStorage.getItem('a2ui_token');
-            if (!token) {
-                showToast('请先登录', 'error');
-                return;
-            }
-            
-            try {
-                const res = await fetch(`${API_BASE}/api/proposals/${id}`, {
-                    method: 'PUT',
-                    headers: { 
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${JSON.parse(decodeURIComponent(token)).token}`
-                    },
-                    body: JSON.stringify({ status })
-                });
-                
-                if (res.ok) {
-                    showToast('状态更新成功');
-                    loadProposals();
-                }
-            } catch (e) {
-                showToast('更新失败', 'error');
-            }
-        }
-        
-        // Delete proposal
-        async function deleteProposal(id) {
-            if (!confirm('确定要删除这个提案吗？')) return;
-            
-            const token = localStorage.getItem('a2ui_token');
-            if (!token) {
-                showToast('请先登录', 'error');
-                return;
-            }
-            
-            try {
-                const res = await fetch(`${API_BASE}/api/proposals/${id}`, {
-                    method: 'DELETE',
-                    headers: { 'Authorization': `Bearer ${JSON.parse(decodeURIComponent(token)).token}` }
-                });
-                
-                if (res.ok) {
-                    showToast('删除成功');
-                    loadProposals();
-                }
-            } catch (e) {
-                showToast('删除失败', 'error');
-            }
-        }
-        
-        // Show toast
-        function showToast(message, type = 'success') {
-            const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
-            toast.textContent = message;
-            document.body.appendChild(toast);
-            setTimeout(() => toast.remove(), 3000);
-        }
-        
-        // Escape HTML
-        function escapeHtml(text) {
-            if (!text) return '';
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-        
-        // 退出登录
-        function logout() {
-            if (confirm('确定要退出登录吗？')) {
-                localStorage.removeItem('a2ui_token');
-                window.location.href = 'login.html';
-            }
-        }
-        
-        // 自动登出（10分钟未操作）
+        // 自动登出
         let idleTime = 0;
-        setInterval(() => {
-            idleTime++;
-            if (idleTime >= 10) {
-                if (confirm('长时间未操作，是否继续？')) {
-                    idleTime = 0;
-                } else {
-                    logout();
-                }
-            }
-        }, 60000);
-        
+        setInterval(() => { idleTime++; if (idleTime >= 10) { if (confirm('长时间未操作，是否继续？')) { idleTime = 0; } else { logout(); } } }, 60000);
         document.addEventListener('click', () => idleTime = 0);
         document.addEventListener('keypress', () => idleTime = 0);
         
-        // 检查登录状态显示用户名
-        function initUserDisplay() {
-            const token = localStorage.getItem('a2ui_token');
-            const userDisplay = document.getElementById('user-display');
-            if (token && userDisplay) {
-                try {
-                    const user = JSON.parse(decodeURIComponent(token));
-                    userDisplay.textContent = (user.display_name || user.username) + ' (' + user.role + ')';
-                } catch(e) {}
+        // 加载统计
+        async function loadStats() {
+            try {
+                const data = await apiGet('/api/stats/overview');
+                document.getElementById('stat-total').textContent = data.total;
+                document.getElementById('stat-pending').textContent = data.pending + data.reviewing;
+                document.getElementById('stat-approved').textContent = data.approved;
+                document.getElementById('stat-completed').textContent = data.completed;
+            } catch (e) { console.error(e); }
+        }
+        
+        // 防抖搜索
+        function debounceSearch() {
+            if (searchTimeout) clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(loadProposals, 500);
+        }
+        
+        // 加载提案
+        async function loadProposals() {
+            const list = document.getElementById('proposal-list');
+            const status = document.getElementById('filter-status').value;
+            const category = document.getElementById('filter-category').value;
+            const sentiment = document.getElementById('filter-sentiment').value;
+            const search = document.getElementById('search-input').value;
+            
+            try {
+                let url = `${API_BASE}/api/proposals?limit=100`;
+                if (status) url += `&status=${status}`;
+                if (category) url += `&category=${category}`;
+                if (sentiment) url += `&sentiment=${sentiment}`;
+                if (search) url += `&search=${encodeURIComponent(search)}`;
+                
+                proposals = await apiGet('/api/proposals');
+                
+                if (proposals.length === 0) {
+                    list.innerHTML = '<div class="empty-state">暂无提案</div>';
+                    return;
+                }
+                
+                list.innerHTML = proposals.map(p => `
+                    <div class="card proposal-card">
+                        <div class="proposal-card-header">
+                            <span class="proposal-title">${escapeHtml(p.title)}</span>
+                            <div style="display:flex;gap:8px;align-items:center;">
+                                ${p.sentiment ? `<span>${p.sentiment === 'positive' ? '😊' : p.sentiment === 'negative' ? '😔' : '😐'}</span>` : ''}
+                                <span class="badge badge-${p.status}">${getStatusText(p.status)}</span>
+                            </div>
+                        </div>
+                        <p style="color:var(--color-text-secondary);font-size:14px;margin:8px 0;">${escapeHtml(p.problem_desc || '').substring(0, 150)}...</p>
+                        <div class="proposal-meta">
+                            <span>📁 ${p.category}</span>
+                            ${p.tags && p.tags.length ? `<span>🏷️ ${p.tags.join(', ')}</span>` : ''}
+                            <span>💬 ${p.comment_count || 0}</span>
+                            <span>📎 ${p.attachment_count || 0}</span>
+                            <span>⭐ <input type="number" class="score-input" value="${p.score || 0}" min="0" max="100" onchange="updateScore(${p.id}, this.value)"></span>
+                            <span>📅 ${formatDate(p.created_at)}</span>
+                            <span>👤 ${p.submitter || '匿名'}</span>
+                        </div>
+                        <div class="proposal-actions" style="margin-top:12px;">
+                            <button class="btn btn-sm btn-primary" onclick="viewProposal(${p.id})">查看详情</button>
+                            ${p.status === 'pending' ? `<button class="btn btn-sm btn-secondary" onclick="updateStatus(${p.id}, 'reviewing')">审核</button>` : ''}
+                            ${p.status === 'reviewing' ? `<button class="btn btn-sm btn-secondary" onclick="updateStatus(${p.id}, 'approved')">采纳</button>
+                            <button class="btn btn-sm btn-danger" onclick="updateStatus(${p.id}, 'rejected')">拒绝</button>` : ''}
+                            ${p.status === 'approved' ? `<button class="btn btn-sm btn-secondary" onclick="updateStatus(${p.id}, 'completed')">完成</button>` : ''}
+                            <button class="btn btn-sm btn-danger" onclick="deleteProposal(${p.id})">删除</button>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (e) {
+                list.innerHTML = '<div class="empty-state">加载失败</div>';
             }
         }
         
-        // Init
-        initUserDisplay();
+        // 更新评分
+        async function updateScore(id, score) {
+            try { await apiPut(`/api/proposals/${id}`, { score: parseInt(score) }); showToast('评分已更新'); } catch (e) { showToast('更新失败', 'error'); }
+        }
+        
+        // 查看详情
+        async function viewProposal(id) {
+            currentProposal = proposals.find(p => p.id === id);
+            if (!currentProposal) return;
+            
+            document.getElementById('modal-title').textContent = currentProposal.title;
+            
+            let content = `
+                <div style="margin-bottom:16px;">
+                    <p><strong>分类：</strong>${currentProposal.category}</p>
+                    <p><strong>提交人：</strong>${currentProposal.submitter || '匿名'}</p>
+                    <p><strong>优先级：</strong>${currentProposal.priority}</p>
+                    <p><strong>情感：</strong>${currentProposal.sentiment === 'positive' ? '😊 正面' : currentProposal.sentiment === 'negative' ? '😔 负面' : '😐 中立'}</p>
+                    <p><strong>评分：</strong>${currentProposal.score || 0}分</p>
+                    <p><strong>提交时间：</strong>${formatDate(currentProposal.created_at)}</p>
+                </div>
+                <div style="margin-bottom:16px;">
+                    <strong>问题描述：</strong>
+                    <p style="color:var(--color-text-secondary);margin-top:8px;white-space:pre-wrap;">${escapeHtml(currentProposal.problem_desc || '')}</p>
+                </div>
+                ${currentProposal.solution ? `<div style="margin-bottom:16px;"><strong>解决方案：</strong><p style="color:var(--color-text-secondary);margin-top:8px;white-space:pre-wrap;">${escapeHtml(currentProposal.solution)}</p></div>` : ''}
+            `;
+            
+            // 附件
+            if (currentProposal.attachments && currentProposal.attachments.length > 0) {
+                content += `<div style="margin-bottom:16px;"><strong>附件：</strong><ul style="margin-top:8px;">`;
+                content += currentProposal.attachments.map(a => `<li style="margin:4px 0;"><a href="${API_BASE}/api/attachments/${a.id}/download" style="color:var(--color-primary);">📎 ${a.filename}</a> (${(a.filesize/1024).toFixed(1)}KB)</li>`).join('');
+                content += `</ul></div>`;
+            }
+            
+            // 评论
+            content += `<div class="comment-section"><strong>评论 (${currentProposal.comments?.length || 0})</strong>`;
+            if (currentProposal.comments && currentProposal.comments.length > 0) {
+                content += currentProposal.comments.map(c => `<div class="comment-item"><span style="color:var(--color-primary);">${c.user}</span>: ${escapeHtml(c.content)} <span style="color:var(--color-text-muted);font-size:12px;margin-left:8px;">${formatDate(c.created_at)}</span></div>`).join('');
+            }
+            content += `<div class="comment-form"><input type="text" id="comment-input" class="form-input" placeholder="添加评论..."><button class="btn btn-sm btn-primary" onclick="addComment(${currentProposal.id})">发送</button></div>`;
+            content += `</div>`;
+            
+            document.getElementById('modal-content').innerHTML = content;
+            document.getElementById('detail-modal').classList.add('active');
+        }
+        
+        function closeDetailModal() {
+            document.getElementById('detail-modal').classList.remove('active');
+        }
+        
+        // 添加评论
+        async function addComment(proposalId) {
+            const input = document.getElementById('comment-input');
+            if (!input.value.trim()) return;
+            try {
+                await apiPost(`/api/proposals/${proposalId}/comments`, { content: input.value });
+                showToast('评论成功');
+                input.value = '';
+                loadProposals();
+                viewProposal(proposalId);
+            } catch (e) { showToast('评论失败', 'error'); }
+        }
+        
+        // 更新状态
+        async function updateStatus(id, status) {
+            try { await apiPut(`/api/proposals/${id}`, { status }); showToast('状态已更新'); loadStats(); loadProposals(); } catch (e) { showToast('更新失败', 'error'); }
+        }
+        
+        // 删除提案
+        async function deleteProposal(id) {
+            if (!confirm('确定要删除这个提案吗？')) return;
+            try { await apiDelete(`/api/proposals/${id}`); showToast('删除成功'); loadStats(); loadProposals(); } catch (e) { showToast('删除失败', 'error'); }
+        }
+        
+        // 初始化
+        loadStats();
         loadProposals();
     </script>
 </body>
