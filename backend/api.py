@@ -6,13 +6,17 @@
 
 from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
 from typing import Optional, List
 from datetime import datetime
 import sqlite3
-import json
+import os
 
 app = FastAPI(title="改善提案系统 API", version="1.0.0")
+
+# 数据库路径（可从环境变量配置）
+DB_PATH = os.getenv('PROPOSALS_DB_PATH', 
+    DB_PATH)
 
 # 健康检查
 @app.get("/")
@@ -23,10 +27,11 @@ def root():
 def health():
     return {"status": "healthy"}
 
-# CORS
+# CORS 配置（可从环境变量配置）
+cors_origins = os.getenv('CORS_ORIGINS', '*').split(',')
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=cors_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -34,7 +39,7 @@ app.add_middleware(
 
 # 数据库初始化
 def init_db():
-    conn = sqlite3.connect('/home/test/.openclaw/workspace/a2ui-proposal-system/proposals.db')
+    conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
     
     # 提案表
@@ -90,6 +95,31 @@ class Proposal(BaseModel):
     expected_effect: Optional[str] = None
     priority: str = "normal"
     submitter: str = "匿名"
+    
+    @field_validator('title')
+    @classmethod
+    def validate_title(cls, v):
+        if not v or len(v.strip()) == 0:
+            raise ValueError('标题不能为空')
+        if len(v) > 200:
+            raise ValueError('标题不能超过200字符')
+        return v.strip()
+    
+    @field_validator('problem_desc')
+    @classmethod
+    def validate_problem_desc(cls, v):
+        if not v or len(v.strip()) == 0:
+            raise ValueError('问题描述不能为空')
+        if len(v) > 2000:
+            raise ValueError('问题描述不能超过2000字符')
+        return v.strip()
+    
+    @field_validator('priority')
+    @classmethod
+    def validate_priority(cls, v):
+        if v not in ['low', 'normal', 'high', 'urgent']:
+            raise ValueError('优先级必须是: low, normal, high, urgent')
+        return v
 
 class ProposalUpdate(BaseModel):
     status: Optional[str] = None
@@ -99,7 +129,7 @@ class ProposalUpdate(BaseModel):
 # API 路由
 @app.post("/api/proposals")
 def create_proposal(proposal: Proposal):
-    conn = sqlite3.connect('/home/test/.openclaw/workspace/a2ui-proposal-system/proposals.db')
+    conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
     
     c.execute('''
@@ -116,7 +146,7 @@ def create_proposal(proposal: Proposal):
 
 @app.get("/api/proposals")
 def get_proposals(status: Optional[str] = None, category: Optional[str] = None, limit: int = 50):
-    conn = sqlite3.connect('/home/test/.openclaw/workspace/a2ui-proposal-system/proposals.db')
+    conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     c = conn.cursor()
     
@@ -141,7 +171,7 @@ def get_proposals(status: Optional[str] = None, category: Optional[str] = None, 
 
 @app.get("/api/proposals/{proposal_id}")
 def get_proposal(proposal_id: int):
-    conn = sqlite3.connect('/home/test/.openclaw/workspace/a2ui-proposal-system/proposals.db')
+    conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     c = conn.cursor()
     
@@ -156,7 +186,7 @@ def get_proposal(proposal_id: int):
 
 @app.put("/api/proposals/{proposal_id}")
 def update_proposal(proposal_id: int, update: ProposalUpdate):
-    conn = sqlite3.connect('/home/test/.openclaw/workspace/a2ui-proposal-system/proposals.db')
+    conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
     
     # 检查是否存在
@@ -197,7 +227,7 @@ def update_proposal(proposal_id: int, update: ProposalUpdate):
 
 @app.delete("/api/proposals/{proposal_id}")
 def delete_proposal(proposal_id: int):
-    conn = sqlite3.connect('/home/test/.openclaw/workspace/a2ui-proposal-system/proposals.db')
+    conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
     
     c.execute("DELETE FROM proposals WHERE id = ?", (proposal_id,))
@@ -213,7 +243,7 @@ def delete_proposal(proposal_id: int):
 
 @app.get("/api/stats/overview")
 def get_stats_overview():
-    conn = sqlite3.connect('/home/test/.openclaw/workspace/a2ui-proposal-system/proposals.db')
+    conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
     
     # 总数
@@ -247,7 +277,7 @@ def get_stats_overview():
 
 @app.get("/api/stats/by-category")
 def get_stats_by_category():
-    conn = sqlite3.connect('/home/test/.openclaw/workspace/a2ui-proposal-system/proposals.db')
+    conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     c = conn.cursor()
     
@@ -274,7 +304,7 @@ def get_stats_by_category():
 
 @app.get("/api/stats/by-month")
 def get_stats_by_month(months: int = 6):
-    conn = sqlite3.connect('/home/test/.openclaw/workspace/a2ui-proposal-system/proposals.db')
+    conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
     
     c.execute(f'''
@@ -293,7 +323,7 @@ def get_stats_by_month(months: int = 6):
 
 @app.get("/api/categories")
 def get_categories():
-    conn = sqlite3.connect('/home/test/.openclaw/workspace/a2ui-proposal-system/proposals.db')
+    conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     c = conn.cursor()
     
