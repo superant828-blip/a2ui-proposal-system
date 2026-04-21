@@ -24,6 +24,47 @@
             padding: 24px;
         }
         
+        /* Nav Bar */
+        .nav-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 24px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            margin-bottom: 24px;
+        }
+        
+        .nav-brand { font-size: 18px; font-weight: 700; }
+        
+        .nav-links { display: flex; gap: 16px; }
+        
+        .nav-link {
+            padding: 8px 16px;
+            color: #9ca3af;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        
+        .nav-link:hover { background: rgba(255,255,255,0.1); color: #fff; }
+        .nav-link.primary { background: #3b82f6; color: #fff; }
+        
+        .nav-user { display: flex; align-items: center; gap: 12px; }
+        .nav-user span { color: #9ca3af; font-size: 13px; }
+        
+        .nav-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            background: rgba(255,255,255,0.1);
+            color: #9ca3af;
+        }
+        .nav-btn:hover { background: rgba(255,255,255,0.2); color: #fff; }
+        
         .header {
             display: flex;
             justify-content: space-between;
@@ -292,6 +333,20 @@
 </head>
 <body>
     <div class="container">
+    <!-- Navigation -->
+    <nav class="nav-bar">
+        <div class="nav-brand">💡 改善提案系统</div>
+        <div class="nav-links">
+            <a href="index.html" class="nav-link">🏠 首页</a>
+            <a href="admin.html" class="nav-link primary">📋 管理后台</a>
+            <a href="stats.html" class="nav-link">📊 数据看板</a>
+            <a href="users.html" class="nav-link">👥 用户管理</a>
+        </div>
+        <div class="nav-user">
+            <span id="user-display"></span>
+            <button class="nav-btn" onclick="logout()">退出</button>
+        </div>
+    </nav>
         <div class="header">
             <h1>💡 提案管理后台</h1>
             <button class="back-btn" onclick="window.location.href='index.html'">← 返回前台</button>
@@ -604,7 +659,44 @@
             return div.innerHTML;
         }
         
+        // 退出登录
+        function logout() {
+            if (confirm('确定要退出登录吗？')) {
+                localStorage.removeItem('a2ui_token');
+                window.location.href = 'login.html';
+            }
+        }
+        
+        // 自动登出（10分钟未操作）
+        let idleTime = 0;
+        setInterval(() => {
+            idleTime++;
+            if (idleTime >= 10) {
+                if (confirm('长时间未操作，是否继续？')) {
+                    idleTime = 0;
+                } else {
+                    logout();
+                }
+            }
+        }, 60000);
+        
+        document.addEventListener('click', () => idleTime = 0);
+        document.addEventListener('keypress', () => idleTime = 0);
+        
+        // 检查登录状态显示用户名
+        function initUserDisplay() {
+            const token = localStorage.getItem('a2ui_token');
+            const userDisplay = document.getElementById('user-display');
+            if (token && userDisplay) {
+                try {
+                    const user = JSON.parse(decodeURIComponent(token));
+                    userDisplay.textContent = (user.display_name || user.username) + ' (' + user.role + ')';
+                } catch(e) {}
+            }
+        }
+        
         // Init
+        initUserDisplay();
         loadProposals();
     </script>
 </body>
