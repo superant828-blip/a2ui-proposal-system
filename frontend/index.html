@@ -4,361 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>💡 改善提案系统</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            min-height: 100vh;
-            color: #fff;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 24px;
-        }
-        
-        /* Header */
-        .header {
-            text-align: center;
-            margin-bottom: 24px;
-        }
-        
-        /* Nav Bar */
-        .nav-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 24px;
-            background: rgba(255,255,255,0.05);
-            border-radius: 12px;
-            margin-bottom: 24px;
-        }
-        
-        .nav-brand {
-            font-size: 18px;
-            font-weight: 700;
-        }
-        
-        .nav-links {
-            display: flex;
-            gap: 16px;
-        }
-        
-        .nav-link {
-            padding: 8px 16px;
-            color: #9ca3af;
-            text-decoration: none;
-            border-radius: 6px;
-            font-size: 14px;
-            transition: all 0.2s;
-        }
-        
-        .nav-link:hover {
-            background: rgba(255,255,255,0.1);
-            color: #fff;
-        }
-        
-        .nav-link.primary {
-            background: #3b82f6;
-            color: #fff;
-        }
-        
-        .nav-user {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        
-        .nav-user span {
-            color: #9ca3af;
-            font-size: 13px;
-        }
-        
-        .nav-btn {
-            padding: 6px 12px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 12px;
-            background: rgba(255,255,255,0.1);
-            color: #9ca3af;
-        }
-        
-        .nav-btn:hover {
-            background: rgba(255,255,255,0.2);
-            color: #fff;
-        }
-        
-        .header h1 {
-            font-size: 32px;
-            font-weight: 700;
-            margin-bottom: 8px;
-        }
-        
-        .header p {
-            color: #9ca3af;
-            font-size: 14px;
-        }
-        
-        /* Stats Cards */
-        .stats-row {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 16px;
-            margin-bottom: 24px;
-        }
-        
-        .stat-card {
-            background: rgba(255,255,255,0.05);
-            border-radius: 12px;
-            padding: 20px;
-            text-align: center;
-        }
-        
-        .stat-card.blue { background: rgba(59,130,246,0.15); }
-        .stat-card.orange { background: rgba(245,158,11,0.15); }
-        .stat-card.green { background: rgba(16,185,129,0.15); }
-        .stat-card.purple { background: rgba(139,92,246,0.15); }
-        
-        .stat-card .num {
-            font-size: 32px;
-            font-weight: 700;
-        }
-        
-        .stat-card.blue .num { color: #3b82f6; }
-        .stat-card.orange .num { color: #f59e0b; }
-        .stat-card.green .num { color: #10b981; }
-        .stat-card.purple .num { color: #8b5cf6; }
-        
-        .stat-card .label {
-            color: #9ca3af;
-            font-size: 12px;
-            margin-top: 4px;
-        }
-        
-        /* Tabs */
-        .tabs {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 24px;
-        }
-        
-        .tab-btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 500;
-            transition: all 0.2s;
-        }
-        
-        .tab-btn.primary {
-            background: #3b82f6;
-            color: #fff;
-        }
-        
-        .tab-btn.secondary {
-            background: rgba(255,255,255,0.1);
-            color: #9ca3af;
-        }
-        
-        .tab-btn:hover {
-            opacity: 0.8;
-        }
-        
-        /* Form */
-        .form-container {
-            background: rgba(255,255,255,0.05);
-            border-radius: 12px;
-            padding: 24px;
-            margin-bottom: 24px;
-        }
-        
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: #9ca3af;
-            font-size: 14px;
-        }
-        
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            width: 100%;
-            padding: 12px;
-            background: rgba(255,255,255,0.1);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 8px;
-            color: #fff;
-            font-size: 14px;
-        }
-        
-        .form-group textarea {
-            min-height: 100px;
-            resize: vertical;
-        }
-        
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: #3b82f6;
-        }
-        
-        .submit-btn {
-            width: 100%;
-            padding: 14px;
-            background: #3b82f6;
-            color: #fff;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        
-        .submit-btn:hover {
-            background: #2563eb;
-        }
-        
-        /* Proposal List */
-        .proposal-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-        
-        .proposal-item {
-            background: rgba(255,255,255,0.05);
-            border-radius: 12px;
-            padding: 16px;
-        }
-        
-        .proposal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 8px;
-        }
-        
-        .proposal-title {
-            font-size: 16px;
-            font-weight: 600;
-        }
-        
-        .status-badge {
-            padding: 4px 8px;
-            border-radius: 6px;
-            font-size: 12px;
-        }
-        
-        .status-badge.pending { background: rgba(107,114,128,0.2); color: #9ca3af; }
-        .status-badge.reviewing { background: rgba(245,158,11,0.2); color: #f59e0b; }
-        .status-badge.approved { background: rgba(59,130,246,0.2); color: #3b82f6; }
-        .status-badge.completed { background: rgba(16,185,129,0.2); color: #10b981; }
-        .status-badge.rejected { background: rgba(239,68,68,0.2); color: #ef4444; }
-        
-        .proposal-body {
-            color: #9ca3af;
-            font-size: 14px;
-            margin-bottom: 8px;
-        }
-        
-        .proposal-footer {
-            color: #6b7280;
-            font-size: 12px;
-        }
-        
-        .category-tag {
-            display: inline-block;
-            padding: 2px 8px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 4px;
-            font-size: 12px;
-            margin-right: 8px;
-        }
-        
-        .priority-tag {
-            display: inline-block;
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            margin-left: 8px;
-        }
-        
-        .priority-tag.high { background: rgba(239,68,68,0.2); color: #ef4444; }
-        .priority-tag.normal { background: rgba(59,130,246,0.2); color: #3b82f6; }
-        .priority-tag.low { background: rgba(107,114,128,0.2); color: #9ca3af; }
-        
-        /* Tab Content */
-        .tab-content {
-            display: none;
-        }
-        
-        .tab-content.active {
-            display: block;
-        }
-        
-        /* Toast */
-        .toast {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 16px 24px;
-            border-radius: 8px;
-            color: #fff;
-            font-size: 14px;
-            z-index: 1000;
-            animation: slideIn 0.3s ease;
-        }
-        
-        .toast.success { background: #10b981; }
-        .toast.error { background: #ef4444; }
-        
-        @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-        
-        /* Empty State */
-        .empty-state {
-            text-align: center;
-            padding: 48px;
-            color: #9ca3af;
-        }
-        
-        /* Responsive */
-        @media (max-width: 768px) {
-            .stats-row {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .container {
-                padding: 16px;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="css/theme.css">
 </head>
 <body>
-    <!-- Navigation -->
+    <!-- 导航栏 -->
     <div class="container">
         <nav class="nav-bar">
             <div class="nav-brand">💡 改善提案系统</div>
             <div class="nav-links">
-                <a href="index.html" class="nav-link primary">🏠 首页</a>
+                <a href="index.html" class="nav-link active">🏠 首页</a>
                 <a href="admin.html" class="nav-link">📋 管理后台</a>
                 <a href="stats.html" class="nav-link">📊 数据看板</a>
                 <a href="users.html" class="nav-link">👥 用户管理</a>
@@ -372,14 +26,8 @@
     </div>
     
     <div class="container">
-        <!-- Header -->
-        <div class="header">
-            <h1>💡 改善提案系统</h1>
-            <p>让每个声音都被听见</p>
-        </div>
-        
-        <!-- Stats -->
-        <div class="stats-row">
+        <!-- 统计卡片 -->
+        <div class="stats-grid">
             <div class="stat-card blue">
                 <div class="num" id="stat-total">0</div>
                 <div class="label">总提案</div>
@@ -398,24 +46,24 @@
             </div>
         </div>
         
-        <!-- Tabs -->
-        <div class="tabs">
-            <button class="tab-btn primary" onclick="switchTab('submit')">📝 提交提案</button>
-            <button class="tab-btn secondary" onclick="switchTab('list')">📋 提案列表</button>
+        <!-- Tab 切换 -->
+        <div class="tabs" style="display:flex;gap:12px;margin-bottom:24px;">
+            <button class="btn btn-primary" onclick="switchTab('submit')">📝 提交提案</button>
+            <button class="btn btn-secondary" onclick="switchTab('list')">📋 我的提案</button>
         </div>
         
-        <!-- Submit Form -->
-        <div id="submit-tab" class="tab-content active">
-            <div class="form-container">
+        <!-- 提交表单 -->
+        <div id="submit-tab" class="tab-content">
+            <div class="card">
                 <form id="proposal-form">
                     <div class="form-group">
-                        <label>提案标题 *</label>
-                        <input type="text" id="title" required maxlength="200" placeholder="请输入提案标题">
+                        <label class="form-label">提案标题 *</label>
+                        <input type="text" id="title" class="form-input" required maxlength="200" placeholder="请输入提案标题">
                     </div>
                     
                     <div class="form-group">
-                        <label>分类 *</label>
-                        <select id="category" required>
+                        <label class="form-label">分类 *</label>
+                        <select id="category" class="form-select" required>
                             <option value="">请选择分类</option>
                             <option value="流程优化">🔄 流程优化</option>
                             <option value="工具改进">🛠️ 工具改进</option>
@@ -426,23 +74,23 @@
                     </div>
                     
                     <div class="form-group">
-                        <label>问题描述 *</label>
-                        <textarea id="problem_desc" required maxlength="2000" placeholder="请详细描述需要改进的问题"></textarea>
+                        <label class="form-label">问题描述 *</label>
+                        <textarea id="problem_desc" class="form-textarea" required maxlength="2000" placeholder="请详细描述需要改进的问题"></textarea>
                     </div>
                     
                     <div class="form-group">
-                        <label>建议解决方案</label>
-                        <textarea id="solution" placeholder="请描述您的改进建议"></textarea>
+                        <label class="form-label">建议解决方案</label>
+                        <textarea id="solution" class="form-textarea" placeholder="请描述您的改进建议"></textarea>
                     </div>
                     
                     <div class="form-group">
-                        <label>预期效果</label>
-                        <textarea id="expected_effect" placeholder="预期达成的效果"></textarea>
+                        <label class="form-label">预期效果</label>
+                        <textarea id="expected_effect" class="form-textarea" placeholder="预期达成的效果"></textarea>
                     </div>
                     
                     <div class="form-group">
-                        <label>优先级</label>
-                        <select id="priority">
+                        <label class="form-label">优先级</label>
+                        <select id="priority" class="form-select">
                             <option value="low">低</option>
                             <option value="normal" selected>普通</option>
                             <option value="high">高</option>
@@ -450,114 +98,84 @@
                     </div>
                     
                     <div class="form-group">
-                        <label>提交人</label>
-                        <input type="text" id="submitter" placeholder="请输入您的名字">
+                        <label class="form-label">提交人</label>
+                        <input type="text" id="submitter" class="form-input" placeholder="请输入您的名字">
                     </div>
                     
-                    <button type="submit" class="submit-btn">提交提案</button>
+                    <button type="submit" class="btn btn-primary" style="width:100%;">提交提案</button>
                 </form>
             </div>
         </div>
         
-        <!-- Proposal List -->
-        <div id="list-tab" class="tab-content">
-            <div class="proposal-list" id="proposal-list">
+        <!-- 提案列表 -->
+        <div id="list-tab" class="tab-content" style="display:none;">
+            <div id="proposal-list">
                 <div class="empty-state">暂无提案，点击"提交提案"创建第一个</div>
             </div>
         </div>
     </div>
     
+    <script src="js/utils.js"></script>
     <script>
-        // 自动获取 API 地址
-        const API_BASE = window.location.origin.replace(':8005', ':8004');
-        
-        // Tab switching
+        // Tab 切换
         function switchTab(tab) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(el => {
-                el.classList.remove('primary');
-                el.classList.add('secondary');
+            document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
+            document.querySelectorAll('.tabs .btn').forEach(btn => {
+                btn.classList.remove('btn-primary');
+                btn.classList.add('btn-secondary');
             });
             
-            document.getElementById(tab + '-tab').classList.add('active');
-            event.target.classList.remove('secondary');
-            event.target.classList.add('primary');
+            document.getElementById(tab + '-tab').style.display = 'block';
+            event.target.classList.remove('btn-secondary');
+            event.target.classList.add('btn-primary');
             
-            if (tab === 'list') {
-                loadProposals();
-            }
+            if (tab === 'list') loadProposals();
         }
         
-        // Show toast
-        function showToast(message, type = 'success') {
-            const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
-            toast.textContent = message;
-            document.body.appendChild(toast);
-            setTimeout(() => toast.remove(), 3000);
-        }
-        
-        // Load stats
+        // 加载统计
         async function loadStats() {
             try {
-                const res = await fetch(`${API_BASE}/api/stats/overview`);
-                const data = await res.json();
+                const data = await apiGet('/api/stats/overview');
                 document.getElementById('stat-total').textContent = data.total || 0;
                 document.getElementById('stat-reviewing').textContent = data.reviewing || 0;
                 document.getElementById('stat-approved').textContent = data.approved || 0;
                 document.getElementById('stat-completed').textContent = data.completed || 0;
             } catch (e) {
-                console.error('Failed to load stats:', e);
+                console.error('加载统计失败:', e);
             }
         }
         
-        // Load proposals
+        // 加载提案列表
         async function loadProposals() {
             const list = document.getElementById('proposal-list');
             try {
-                const res = await fetch(`${API_BASE}/api/proposals`);
-                const proposals = await res.json();
+                const proposals = await apiGet('/api/proposals');
                 
                 if (proposals.length === 0) {
                     list.innerHTML = '<div class="empty-state">暂无提案</div>';
                     return;
                 }
                 
-                const statusMap = {
-                    'pending': '待审核',
-                    'reviewing': '审核中',
-                    'approved': '已采纳',
-                    'completed': '已完成',
-                    'rejected': '已拒绝'
-                };
-                
                 list.innerHTML = proposals.map(p => `
-                    <div class="proposal-item">
-                        <div class="proposal-header">
-                            <span class="proposal-title">${escapeHtml(p.title)}</span>
-                            <span class="status-badge ${p.status}">${statusMap[p.status] || p.status}</span>
+                    <div class="card" style="margin-bottom:12px;">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                            <span style="font-weight:600;">${escapeHtml(p.title)}</span>
+                            <span class="badge badge-${p.status}">${getStatusText(p.status)}</span>
                         </div>
-                        <div class="proposal-body">${escapeHtml(p.problem_desc || '')}</div>
-                        <div class="proposal-footer">
-                            <span class="category-tag">${p.category}</span>
-                            ${p.priority !== 'normal' ? `<span class="priority-tag ${p.priority}">${p.priority === 'high' ? '高优先' : '低优先'}</span>` : ''}
-                            <span>提交于 ${p.created_at ? p.created_at.substring(0, 10) : ''} · ${p.submitter || '匿名'}</span>
+                        <p style="color:var(--color-text-secondary);font-size:14px;margin-bottom:8px;">${escapeHtml(p.problem_desc || '')}</p>
+                        <div style="color:var(--color-text-muted);font-size:12px;">
+                            <span class="badge badge-normal">${p.category}</span>
+                            ${p.priority !== 'normal' ? `<span class="badge badge-${p.priority}">${p.priority === 'high' ? '高优先' : '低优先'}</span>` : ''}
+                            <span>提交于 ${formatDate(p.created_at)} · ${p.submitter || '匿名'}</span>
                         </div>
                     </div>
                 `).join('');
             } catch (e) {
-                list.innerHTML = '<div class="empty-state">加载失败，请检查后端服务</div>';
+                list.innerHTML = '<div class="empty-state">加载失败</div>';
             }
         }
         
-        // Escape HTML
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-        
-        // Submit proposal
+        // 提交表单
         document.getElementById('proposal-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -572,60 +190,18 @@
             };
             
             try {
-                const res = await fetch(`${API_BASE}/api/proposals`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                });
-                
-                if (res.ok) {
-                    showToast('提案提交成功！');
-                    e.target.reset();
-                    loadStats();
-                    switchTab('list');
-                } else {
-                    const err = await res.json();
-                    showToast(err.detail || '提交失败', 'error');
-                }
+                await apiPost('/api/proposals', data);
+                showToast('提案提交成功！');
+                e.target.reset();
+                loadStats();
+                switchTab('list');
             } catch (e) {
-                showToast('网络错误，请检查后端服务', 'error');
+                showToast(e.message || '提交失败', 'error');
             }
         });
         
-        // Init
+        // 初始化
         loadStats();
-        checkLoginStatus();
-        
-        // 检查登录状态
-        function checkLoginStatus() {
-            const token = localStorage.getItem('a2ui_token');
-            const loginBtn = document.getElementById('login-btn');
-            const logoutBtn = document.getElementById('logout-btn');
-            const userDisplay = document.getElementById('user-display');
-            
-            if (token) {
-                try {
-                    const user = JSON.parse(decodeURIComponent(token));
-                    loginBtn.style.display = 'none';
-                    logoutBtn.style.display = 'block';
-                    userDisplay.textContent = user.display_name || user.username;
-                } catch(e) {
-                    localStorage.removeItem('a2ui_token');
-                }
-            } else {
-                loginBtn.style.display = 'block';
-                logoutBtn.style.display = 'none';
-                userDisplay.textContent = '';
-            }
-        }
-        
-        // 退出登录
-        function logout() {
-            if (confirm('确定要退出登录吗？')) {
-                localStorage.removeItem('a2ui_token');
-                window.location.href = 'index.html';
-            }
-        }
     </script>
 </body>
 </html>
