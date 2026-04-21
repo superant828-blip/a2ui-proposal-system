@@ -83,16 +83,15 @@
             background: #2563eb;
         }
         
-        .toast {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 12px 20px;
-            border-radius: 6px;
-            color: #fff;
+        .error-msg {
+            color: #ef4444;
             font-size: 14px;
-            z-index: 1000;
-            background: #ef4444;
+            margin-top: 12px;
+            display: none;
+        }
+        
+        .error-msg.show {
+            display: block;
         }
         
         .back-link {
@@ -118,16 +117,23 @@
                 <input type="password" id="password" required placeholder="请输入密码">
             </div>
             <button type="submit" class="submit-btn">登录</button>
+            <div id="error-msg" class="error-msg"></div>
         </form>
         
         <a href="index.html" class="back-link">← 返回首页</a>
     </div>
     
     <script>
-        const API_BASE = window.location.origin.replace(':8005', ':8004');
+        // API 地址
+        const API_PORT = 8004;
+        const apiBase = `${window.location.protocol}//${window.location.hostname}:${API_PORT}`;
         
         document.getElementById('login-form').addEventListener('submit', async (e) => {
             e.preventDefault();
+            
+            const errorMsg = document.getElementById('error-msg');
+            errorMsg.classList.remove('show');
+            errorMsg.textContent = '';
             
             const data = {
                 username: document.getElementById('username').value,
@@ -135,7 +141,7 @@
             };
             
             try {
-                const res = await fetch(`${API_BASE}/api/auth/login`, {
+                const res = await fetch(`${apiBase}/api/auth/login`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)
@@ -150,20 +156,15 @@
                     window.location.href = 'admin.html';
                 } else {
                     const err = await res.json();
-                    showToast(err.detail || '登录失败');
+                    errorMsg.textContent = err.detail || '登录失败';
+                    errorMsg.classList.add('show');
                 }
             } catch (e) {
-                showToast('网络错误');
+                console.error(e);
+                errorMsg.textContent = '无法连接到服务器，请检查服务是否运行';
+                errorMsg.classList.add('show');
             }
         });
-        
-        function showToast(message) {
-            const toast = document.createElement('div');
-            toast.className = 'toast';
-            toast.textContent = message;
-            document.body.appendChild(toast);
-            setTimeout(() => toast.remove(), 3000);
-        }
     </script>
 </body>
 </html>
