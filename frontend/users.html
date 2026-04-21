@@ -5,11 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>👥 用户权限管理</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -18,13 +14,8 @@
             color: #fff;
         }
         
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 24px;
-        }
+        .container { max-width: 1200px; margin: 0 auto; padding: 24px; }
         
-        .header {
         .nav-bar { display: flex; justify-content: space-between; align-items: center; padding: 12px 24px; background: rgba(255,255,255,0.05); border-radius: 12px; margin-bottom: 24px; }
         .nav-brand { font-size: 18px; font-weight: 700; }
         .nav-links { display: flex; gap: 16px; }
@@ -35,209 +26,74 @@
         .nav-user span { color: #9ca3af; font-size: 13px; }
         .nav-btn { padding: 6px 12px; border: none; border-radius: 6px; cursor: pointer; font-size: 12px; background: rgba(255,255,255,0.1); color: #9ca3af; }
         .nav-btn:hover { background: rgba(255,255,255,0.2); color: #fff; }
-
-
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
-        }
         
-        .header h1 {
-            font-size: 24px;
-        }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+        .header h1 { font-size: 24px; }
         
-        .header-btns {
-            display: flex;
-            gap: 12px;
-        }
-        
-        .btn {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 13px;
-            transition: all 0.2s;
-        }
-        
-        .btn-primary { background: #3b82f6; color: #fff; }
+        .header-btns { display: flex; gap: 12px; }
+        .btn { padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; background: #3b82f6; color: #fff; }
         .btn-secondary { background: rgba(255,255,255,0.1); color: #fff; }
-        .btn-danger { background: rgba(239,68,68,0.2); color: #ef4444; }
         .btn:hover { opacity: 0.8; }
         
-        /* User Table */
-        .user-table {
-            width: 100%;
-            border-collapse: collapse;
-            background: rgba(255,255,255,0.05);
-            border-radius: 12px;
-            overflow: hidden;
-        }
+        .user-table { width: 100%; border-collapse: collapse; background: rgba(255,255,255,0.05); border-radius: 12px; overflow: hidden; }
+        .user-table th, .user-table td { padding: 14px 16px; text-align: left; }
+        .user-table th { background: rgba(255,255,255,0.1); font-weight: 600; font-size: 13px; color: #9ca3af; }
+        .user-table td { border-bottom: 1px solid rgba(255,255,255,0.05); }
         
-        .user-table th,
-        .user-table td {
-            padding: 14px 16px;
-            text-align: left;
-        }
-        
-        .user-table th {
-            background: rgba(255,255,255,0.1);
-            font-weight: 600;
-            font-size: 13px;
-            color: #9ca3af;
-        }
-        
-        .user-table td {
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-        }
-        
-        .role-badge {
-            padding: 4px 10px;
-            border-radius: 4px;
-            font-size: 12px;
-        }
-        
+        .role-badge { padding: 4px 10px; border-radius: 4px; font-size: 12px; }
         .role-badge.admin { background: rgba(239,68,68,0.2); color: #ef4444; }
         .role-badge.reviewer { background: rgba(245,158,11,0.2); color: #f59e0b; }
         .role-badge.user { background: rgba(59,130,246,0.2); color: #3b82f6; }
         
-        .action-btns {
-            display: flex;
-            gap: 8px;
-        }
-        
-        .action-btn {
-            padding: 4px 10px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 12px;
-        }
-        
+        .action-btns { display: flex; gap: 8px; }
+        .action-btn { padding: 4px 10px; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; }
         .action-btn.edit { background: rgba(59,130,246,0.2); color: #3b82f6; }
         .action-btn.delete { background: rgba(239,68,68,0.2); color: #ef4444; }
         
-        /* Modal */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.7);
-            z-index: 100;
-            align-items: center;
-            justify-content: center;
-        }
-        
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); z-index: 100; align-items: center; justify-content: center; }
         .modal-overlay.active { display: flex; }
-        
-        .modal {
-            background: #1a1a2e;
-            border-radius: 12px;
-            padding: 24px;
-            width: 400px;
-        }
-        
+        .modal { background: #1a1a2e; border-radius: 12px; padding: 24px; width: 400px; }
         .modal h2 { margin-bottom: 20px; }
         
-        .form-group {
-            margin-bottom: 16px;
-        }
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; margin-bottom: 6px; color: #9ca3af; font-size: 13px; }
+        .form-group input, .form-group select { width: 100%; padding: 10px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; color: #fff; font-size: 14px; }
+        .form-group input:focus, .form-group select:focus { outline: none; border-color: #3b82f6; }
         
-        .form-group label {
-            display: block;
-            margin-bottom: 6px;
-            color: #9ca3af;
-            font-size: 13px;
-        }
-        
-        .form-group input,
-        .form-group select {
-            width: 100%;
-            padding: 10px;
-            background: rgba(255,255,255,0.1);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 6px;
-            color: #fff;
-            font-size: 14px;
-        }
-        
-        .form-group input:focus,
-        .form-group select:focus {
-            outline: none;
-            border-color: #3b82f6;
-        }
-        
-        .modal-actions {
-            display: flex;
-            gap: 12px;
-            margin-top: 20px;
-        }
-        
-        .modal-btn {
-            flex: 1;
-            padding: 10px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 14px;
-        }
-        
+        .modal-actions { display: flex; gap: 12px; margin-top: 20px; }
+        .modal-btn { flex: 1; padding: 10px; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; }
         .modal-btn.primary { background: #3b82f6; color: #fff; }
         .modal-btn.secondary { background: rgba(255,255,255,0.1); color: #fff; }
         
-        /* Toast */
-        .toast {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 12px 20px;
-            border-radius: 6px;
-            color: #fff;
-            font-size: 14px;
-            z-index: 1000;
-            animation: slideIn 0.3s ease;
-        }
-        
+        .toast { position: fixed; top: 20px; right: 20px; padding: 12px 20px; border-radius: 6px; color: #fff; font-size: 14px; z-index: 1000; animation: slideIn 0.3s ease; }
         .toast.success { background: #10b981; }
         .toast.error { background: #ef4444; }
-        
-        @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-        
-        .empty-state {
-            text-align: center;
-            padding: 48px;
-            color: #9ca3af;
-        }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        .empty-state { text-align: center; padding: 48px; color: #9ca3af; }
     </style>
 </head>
 <body>
     <div class="container">
-    <!-- Navigation -->
-    <nav class="nav-bar">
-        <div class="nav-brand">💡 改善提案系统</div>
-        <div class="nav-links">
-            <a href="index.html" class="nav-link">🏠 首页</a>
-            <a href="admin.html" class="nav-link">📋 管理后台</a>
-            <a href="stats.html" class="nav-link">📊 数据看板</a>
-            <a href="users.html" class="nav-link primary">👥 用户管理</a>
-        </div>
-        <div class="nav-user">
-            <span id="user-display"></span>
-            <button class="nav-btn" onclick="logout()">退出</button>
-        </div>
-    </nav>
+        <!-- Navigation -->
+        <nav class="nav-bar">
+            <div class="nav-brand">💡 改善提案系统</div>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">🏠 首页</a>
+                <a href="admin.html" class="nav-link">📋 管理后台</a>
+                <a href="stats.html" class="nav-link">📊 数据看板</a>
+                <a href="users.html" class="nav-link primary">👥 用户管理</a>
+            </div>
+            <div class="nav-user">
+                <span id="user-display"></span>
+                <button class="nav-btn" onclick="logout()">退出</button>
+            </div>
+        </nav>
+        
         <div class="header">
             <h1>👥 用户权限管理</h1>
             <div class="header-btns">
                 <button class="btn btn-secondary" onclick="window.location.href='admin.html'">← 返回管理后台</button>
-                <button class="btn btn-primary" onclick="showAddModal()">+ 添加用户</button>
+                <button class="btn" onclick="showAddModal()">+ 添加用户</button>
             </div>
         </div>
         
@@ -294,101 +150,79 @@
     
     <script>
         const API_BASE = window.location.origin.replace(':8005', ':8004');
-        let currentUser = null;
         
         // 检查登录状态
         function checkAuth() {
             const token = localStorage.getItem('a2ui_token');
-            if (!token) {
-                window.location.href = 'login.html';
-                return null;
-            }
+            if (!token) { window.location.href = 'login.html'; return null; }
             try {
                 const user = JSON.parse(decodeURIComponent(token));
-                if (user.role !== 'admin') {
-                    alert('需要管理员权限');
-                    window.location.href = 'admin.html';
-                    return null;
-                }
+                if (user.role !== 'admin') { alert('需要管理员权限'); window.location.href = 'admin.html'; return null; }
                 return user;
-            } catch {
+            } catch { window.location.href = 'login.html'; return null; }
+        }
+        checkAuth();
+        
+        // 初始化用户显示
+        function initUserDisplay() {
+            const token = localStorage.getItem('a2ui_token');
+            const userDisplay = document.getElementById('user-display');
+            if (token && userDisplay) {
+                try {
+                    const user = JSON.parse(decodeURIComponent(token));
+                    userDisplay.textContent = (user.display_name || user.username) + ' (' + user.role + ')';
+                } catch(e) {}
+            }
+        }
+        initUserDisplay();
+        
+        // 退出登录
+        function logout() {
+            if (confirm('确定要退出登录吗？')) {
+                localStorage.removeItem('a2ui_token');
                 window.location.href = 'login.html';
-                return null;
             }
         }
         
-        // 页面加载时检查
-        if (!checkAuth()) {
-            // 已经在 checkAuth 中重定向了
-        }
+        // 自动登出
+        let idleTime = 0;
+        setInterval(() => { idleTime++; if (idleTime >= 10) { if (confirm('长时间未操作，是否继续？')) { idleTime = 0; } else { logout(); } } }, 60000);
+        document.addEventListener('click', () => idleTime = 0);
+        document.addEventListener('keypress', () => idleTime = 0);
         
-        // 获取当前登录信息
         function getAuth() {
             const token = localStorage.getItem('a2ui_token');
             return token ? JSON.parse(decodeURIComponent(token)) : null;
         }
         
-        // 检查登录
-        function checkAuth() {
-            const auth = getAuth();
-            if (!auth || auth.role !== 'admin') {
-                alert('请先登录管理员账号');
-                window.location.href = 'login.html';
-                return null;
-            }
-            return auth;
-        }
-        
-        // 加载用户列表
         async function loadUsers() {
             const auth = getAuth();
             if (!auth) return;
-            
             try {
-                const res = await fetch(`${API_BASE}/api/users`, {
-                    headers: { 'Authorization': `Bearer ${auth.token}` }
-                });
-                
-                if (res.status === 401) {
-                    alert('登录已过期，请重新登录');
-                    window.location.href = 'login.html';
-                    return;
-                }
-                
+                const res = await fetch(`${API_BASE}/api/users`, { headers: { 'Authorization': `Bearer ${auth.token}` } });
+                if (res.status === 401) { alert('登录已过期'); window.location.href = 'login.html'; return; }
                 const users = await res.json();
                 renderUsers(users);
-            } catch (e) {
-                console.error(e);
-            }
+            } catch (e) { console.error(e); }
         }
         
-        // 渲染用户列表
         function renderUsers(users) {
             const tbody = document.getElementById('user-tbody');
-            
-            if (users.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" class="empty-state">暂无用户</td></tr>';
-                return;
-            }
-            
+            if (users.length === 0) { tbody.innerHTML = '<tr><td colspan="6" class="empty-state">暂无用户</td></tr>'; return; }
             const roleMap = { 'admin': '管理员', 'reviewer': '审核员', 'user': '普通用户' };
-            
-            tbody.innerHTML = users.map(u => `
-                <tr>
-                    <td>${u.id}</td>
-                    <td>${u.username}</td>
-                    <td>${u.display_name || '-'}</td>
-                    <td><span class="role-badge ${u.role}">${roleMap[u.role]}</span></td>
-                    <td>${u.created_at ? u.created_at.substring(0, 10) : ''}</td>
-                    <td class="action-btns">
-                        <button class="action-btn edit" onclick="showEditModal(${u.id}, '${u.username}', '${u.display_name || ''}', '${u.role}')">编辑</button>
-                        <button class="action-btn delete" onclick="deleteUser(${u.id})">删除</button>
-                    </td>
-                </tr>
-            `).join('');
+            tbody.innerHTML = users.map(u => `<tr>
+                <td>${u.id}</td>
+                <td>${u.username}</td>
+                <td>${u.display_name || '-'}</td>
+                <td><span class="role-badge ${u.role}">${roleMap[u.role]}</span></td>
+                <td>${u.created_at ? u.created_at.substring(0, 10) : ''}</td>
+                <td class="action-btns">
+                    <button class="action-btn edit" onclick="showEditModal(${u.id}, '${u.username}', '${u.display_name || ''}', '${u.role}')">编辑</button>
+                    <button class="action-btn delete" onclick="deleteUser(${u.id})">删除</button>
+                </td>
+            </tr>`).join('');
         }
         
-        // 显示添加弹窗
         function showAddModal() {
             document.getElementById('modal-title').textContent = '添加用户';
             document.getElementById('user-id').value = '';
@@ -397,7 +231,6 @@
             document.getElementById('user-modal').classList.add('active');
         }
         
-        // 显示编辑弹窗
         function showEditModal(id, username, displayName, role) {
             document.getElementById('modal-title').textContent = '编辑用户';
             document.getElementById('user-id').value = id;
@@ -409,93 +242,37 @@
             document.getElementById('user-modal').classList.add('active');
         }
         
-        // 关闭弹窗
-        function closeModal() {
-            document.getElementById('user-modal').classList.remove('active');
-        }
+        function closeModal() { document.getElementById('user-modal').classList.remove('active'); }
         
-        // 提交表单
         document.getElementById('user-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            
             const auth = getAuth();
             const id = document.getElementById('user-id').value;
-            const data = {
-                username: document.getElementById('username').value,
-                password: document.getElementById('password').value,
-                role: document.getElementById('role').value,
-                display_name: document.getElementById('display-name').value
-            };
-            
-            // 密码为空时不提交
+            const data = { username: document.getElementById('username').value, password: document.getElementById('password').value, role: document.getElementById('role').value, display_name: document.getElementById('display-name').value };
             if (!data.password) delete data.password;
-            
             try {
                 let res;
                 if (id) {
-                    // 编辑
-                    res = await fetch(`${API_BASE}/api/users/${id}`, {
-                        method: 'PUT',
-                        headers: { 
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${auth.token}`
-                        },
-                        body: JSON.stringify(data)
-                    });
+                    res = await fetch(`${API_BASE}/api/users/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${auth.token}` }, body: JSON.stringify(data) });
                 } else {
-                    // 新增
-                    if (!data.password) {
-                        showToast('密码不能为空', 'error');
-                        return;
-                    }
-                    res = await fetch(`${API_BASE}/api/users`, {
-                        method: 'POST',
-                        headers: { 
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${auth.token}`
-                        },
-                        body: JSON.stringify(data)
-                    });
+                    if (!data.password) { showToast('密码不能为空', 'error'); return; }
+                    res = await fetch(`${API_BASE}/api/users`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${auth.token}` }, body: JSON.stringify(data) });
                 }
-                
-                if (res.ok) {
-                    showToast(id ? '更新成功' : '创建成功');
-                    closeModal();
-                    loadUsers();
-                } else {
-                    const err = await res.json();
-                    showToast(err.detail || '操作失败', 'error');
-                }
-            } catch (e) {
-                showToast('网络错误', 'error');
-            }
+                if (res.ok) { showToast(id ? '更新成功' : '创建成功'); closeModal(); loadUsers(); }
+                else { const err = await res.json(); showToast(err.detail || '操作失败', 'error'); }
+            } catch (e) { showToast('网络错误', 'error'); }
         });
         
-        // 删除用户
         async function deleteUser(id) {
             if (!confirm('确定要删除这个用户吗？')) return;
-            
             const auth = getAuth();
-            
             try {
-                const res = await fetch(`${API_BASE}/api/users/${id}`, {
-                    method: 'DELETE',
-                    headers: { 'Authorization': `Bearer ${auth.token}` }
-                });
-                
-                if (res.ok) {
-                    showToast('删除成功');
-                    loadUsers();
-                } else {
-                    const err = await res.json();
-                    showToast(err.detail || '删除失败', 'error');
-                }
-            } catch (e) {
-                showToast('网络错误', 'error');
-            }
+                const res = await fetch(`${API_BASE}/api/users/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${auth.token}` } });
+                if (res.ok) { showToast('删除成功'); loadUsers(); }
+                else { const err = await res.json(); showToast(err.detail || '删除失败', 'error'); }
+            } catch (e) { showToast('网络错误', 'error'); }
         }
         
-        // Toast
         function showToast(message, type = 'success') {
             const toast = document.createElement('div');
             toast.className = `toast ${type}`;
@@ -504,7 +281,6 @@
             setTimeout(() => toast.remove(), 3000);
         }
         
-        // Init
         loadUsers();
     </script>
 </body>
