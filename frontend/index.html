@@ -384,7 +384,8 @@
     </div>
     
     <script>
-        const API_BASE = 'http://192.168.80.209:8004';
+        // 自动获取 API 地址
+        const API_BASE = window.location.origin.replace(':8005', ':8004');
         
         // Tab switching
         function switchTab(tab) {
