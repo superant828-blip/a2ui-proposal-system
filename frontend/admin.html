@@ -513,6 +513,28 @@
             document.getElementById('detail-modal').classList.remove('active');
         }
         
+        // Do action - 根据状态处理提案
+        function doAction() {
+            if (!currentProposal) return;
+            
+            const status = currentProposal.status;
+            let newStatus = '';
+            
+            if (status === 'pending') {
+                newStatus = 'reviewing';
+            } else if (status === 'reviewing') {
+                newStatus = 'approved';
+            } else if (status === 'approved') {
+                newStatus = 'completed';
+            } else {
+                showToast('当前状态无法处理', 'error');
+                return;
+            }
+            
+            updateStatus(currentProposal.id, newStatus);
+            closeModal();
+        }
+        
         // Update status
         async function updateStatus(id, status) {
             try {
