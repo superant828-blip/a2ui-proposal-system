@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📊 数据看板</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            color: #fff;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+        
+        .header h1 {
+            font-size: 24px;
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+        }
+        
+        .btn:hover { background: rgba(255,255,255,0.2); }
+        
+        /* Stats */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        
+        .stat-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .stat-card .num {
+            font-size: 32px;
+            font-weight: 700;
+        }
+        
+        .stat-card .label {
+            color: #9ca3af;
+            font-size: 13px;
+            margin-top: 4px;
+        }
+        
+        /* Charts */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+        
+        .chart-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 20px;
+        }
+        
+        .chart-card h3 {
+            font-size: 16px;
+            margin-bottom: 16px;
+            color: #9ca3af;
+        }
+        
+        .chart-container {
+            height: 300px;
+        }
+        
+        /* Full width chart */
+        .chart-full {
+            grid-column: 1 / -1;
+        }
+        
+        /* Rate cards */
+        .rate-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        
+        .rate-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .rate-icon {
+            font-size: 36px;
+        }
+        
+        .rate-info .num {
+            font-size: 28px;
+            font-weight: 700;
+        }
+        
+        .rate-info .label {
+            color: #9ca3af;
+            font-size: 13px;
+        }
+        
+        @media (max-width: 1024px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 数据看板</h1>
+            <button class="btn" onclick="window.location.href='admin.html'">← 返回管理后台</button>
+        </div>
+        
+        <!-- Overall Stats -->
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="num" id="stat-total" style="color: #3b82f6;">0</div>
+                <div class="label">总提案数</div>
+            </div>
+            <div class="stat-card">
+                <div class="num" id="stat-adoption" style="color: #10b981;">0%</div>
+                <div class="label">采纳率</div>
+            </div>
+            <div class="stat-card">
+                <div class="num" id="stat-completion" style="color: #8b5cf6;">0%</div>
+                <div class="label">完成率</div>
+            </div>
+            <div class="stat-card">
+                <div class="num" id="stat-rejection" style="color: #ef4444;">0%</div>
+                <div class="label">拒绝率</div>
+            </div>
+        </div>
+        
+        <!-- Rate Cards -->
+        <div class="rate-row">
+            <div class="rate-card">
+                <div class="rate-icon">✅</div>
+                <div class="rate-info">
+                    <div class="num" id="rate-approved">0</div>
+                    <div class="label">已采纳 + 已完成</div>
+                </div>
+            </div>
+            <div class="rate-card">
+                <div class="rate-icon">⏳</div>
+                <div class="rate-info">
+                    <div class="num" id="rate-pending">0</div>
+                    <div class="label">待审核 + 审核中</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Charts -->
+        <div class="charts-grid">
+            <div class="chart-card">
+                <h3>📁 分类统计</h3>
+                <div class="chart-container">
+                    <canvas id="categoryChart"></canvas>
+                </div>
+            </div>
+            <div class="chart-card">
+                <h3>📈 状态分布</h3>
+                <div class="chart-container">
+                    <canvas id="statusChart"></canvas>
+                </div>
+            </div>
+            <div class="chart-card chart-full">
+                <h3>📅 月度趋势</h3>
+                <div class="chart-container">
+                    <canvas id="monthChart"></canvas>
+                </div>
+            </div>
+            <div class="chart-card">
+                <h3>⚡ 优先级分布</h3>
+                <div class="chart-container">
+                    <canvas id="priorityChart"></canvas>
+                </div>
+            </div>
+            <div class="chart-card">
+                <h3>🎯 采纳率</h3>
+                <div class="chart-container">
+                    <canvas id="adoptionChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const API_BASE = window.location.origin.replace(':8005', ':8004');
+        
+        let charts = {};
+        
+        // 颜色配置
+        const colors = {
+            blue: '#3b82f6',
+            green: '#10b981',
+            orange: '#f59e0b',
+            purple: '#8b5cf6',
+            red: '#ef4444',
+            gray: '#6b7280'
+        };
+        
+        // Load data
+        async function loadData() {
+            try {
+                const [overviewRes, chartRes] = await Promise.all([
+                    fetch(`${API_BASE}/api/stats/overview`),
+                    fetch(`${API_BASE}/api/stats/chart-data`)
+                ]);
+                
+                const overview = await overviewRes.json();
+                const chartData = await chartRes.json();
+                
+                updateOverview(overview);
+                renderCharts(chartData);
+            } catch (e) {
+                console.error(e);
+            }
+        }
+        
+        // Update overview
+        function updateOverview(data) {
+            document.getElementById('stat-total').textContent = data.total;
+            document.getElementById('stat-adoption').textContent = data.adoption_rate + '%';
+            document.getElementById('stat-completion').textContent = data.completion_rate + '%';
+            
+            const rejectionRate = data.total > 0 
+                ? Math.round(data.rejected / data.total * 100) 
+                : 0;
+            document.getElementById('stat-rejection').textContent = rejectionRate + '%';
+            
+            document.getElementById('rate-approved').textContent = data.approved + data.completed;
+            document.getElementById('rate-pending').textContent = data.pending + data.reviewing;
+        }
+        
+        // Render charts
+        function renderCharts(data) {
+            // Category Chart (Bar)
+            if (charts.category) charts.category.destroy();
+            const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+            charts.category = new Chart(categoryCtx, {
+                type: 'bar',
+                data: {
+                    labels: data.by_category.map(d => d.name),
+                    datasets: [{
+                        label: '提案数',
+                        data: data.by_category.map(d => d.total),
+                        backgroundColor: colors.blue,
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, ticks: { color: '#9ca3af' } },
+                        x: { ticks: { color: '#9ca3af' } }
+                    }
+                }
+            });
+            
+            // Status Chart (Doughnut)
+            if (charts.status) charts.status.destroy();
+            const statusCtx = document.getElementById('statusChart').getContext('2d');
+            const statusColors = {
+                'pending': colors.gray,
+                'reviewing': colors.orange,
+                'approved': colors.blue,
+                'completed': colors.green,
+                'rejected': colors.red
+            };
+            charts.status = new Chart(statusCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['待审核', '审核中', '已采纳', '已完成', '已拒绝'],
+                    datasets: [{
+                        data: [
+                            data.by_status.find(s => s.name === 'pending')?.count || 0,
+                            data.by_status.find(s => s.name === 'reviewing')?.count || 0,
+                            data.by_status.find(s => s.name === 'approved')?.count || 0,
+                            data.by_status.find(s => s.name === 'completed')?.count || 0,
+                            data.by_status.find(s => s.name === 'rejected')?.count || 0
+                        ],
+                        backgroundColor: [colors.gray, colors.orange, colors.blue, colors.green, colors.red]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'right', labels: { color: '#fff' } } }
+                }
+            });
+            
+            // Month Chart (Line)
+            if (charts.month) charts.month.destroy();
+            const monthCtx = document.getElementById('monthChart').getContext('2d');
+            charts.month = new Chart(monthCtx, {
+                type: 'line',
+                data: {
+                    labels: data.by_month.map(d => d.month),
+                    datasets: [{
+                        label: '提案数',
+                        data: data.by_month.map(d => d.count),
+                        borderColor: colors.purple,
+                        backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, ticks: { color: '#9ca3af' } },
+                        x: { ticks: { color: '#9ca3af' } }
+                    }
+                }
+            });
+            
+            // Priority Chart (Pie)
+            if (charts.priority) charts.priority.destroy();
+            const priorityCtx = document.getElementById('priorityChart').getContext('2d');
+            charts.priority = new Chart(priorityCtx, {
+                type: 'pie',
+                data: {
+                    labels: ['低', '普通', '高'],
+                    datasets: [{
+                        data: [
+                            data.by_priority.find(p => p.name === 'low')?.count || 0,
+                            data.by_priority.find(p => p.name === 'normal')?.count || 0,
+                            data.by_priority.find(p => p.name === 'high')?.count || 0
+                        ],
+                        backgroundColor: [colors.gray, colors.blue, colors.red]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'right', labels: { color: '#fff' } } }
+                }
+            });
+            
+            // Adoption Chart (Polar)
+            if (charts.adoption) charts.adoption.destroy();
+            const adoptionCtx = document.getElementById('adoptionChart').getContext('2d');
+            charts.adoption = new Chart(adoptionCtx, {
+                type: 'polarArea',
+                data: {
+                    labels: ['已采纳', '未采纳'],
+                    datasets: [{
+                        data: [
+                            data.by_category.reduce((sum, d) => sum + d.adopted, 0),
+                            data.by_category.reduce((sum, d) => sum + (d.total - d.adopted), 0)
+                        ],
+                        backgroundColor: [colors.green, colors.gray]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'right', labels: { color: '#fff' } } }
+                }
+            });
+        }
+        
+        // Init
+        loadData();
+    </script>
+</body>
+</html>

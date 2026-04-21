@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录 - 改善提案系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+        }
+        
+        .login-box {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 40px;
+            width: 400px;
+            text-align: center;
+        }
+        
+        .login-box h1 {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+        
+        .login-box p {
+            color: #9ca3af;
+            margin-bottom: 32px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #9ca3af;
+            font-size: 14px;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 14px;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+        
+        .submit-btn {
+            width: 100%;
+            padding: 14px;
+            background: #3b82f6;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 12px;
+        }
+        
+        .submit-btn:hover {
+            background: #2563eb;
+        }
+        
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 20px;
+            border-radius: 6px;
+            color: #fff;
+            font-size: 14px;
+            z-index: 1000;
+            background: #ef4444;
+        }
+        
+        .back-link {
+            display: block;
+            margin-top: 20px;
+            color: #9ca3af;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-box">
+        <h1>💡 改善提案系统</h1>
+        <p>管理员登录</p>
+        
+        <form id="login-form">
+            <div class="form-group">
+                <label>用户名</label>
+                <input type="text" id="username" required placeholder="请输入用户名">
+            </div>
+            <div class="form-group">
+                <label>密码</label>
+                <input type="password" id="password" required placeholder="请输入密码">
+            </div>
+            <button type="submit" class="submit-btn">登录</button>
+        </form>
+        
+        <a href="index.html" class="back-link">← 返回首页</a>
+    </div>
+    
+    <script>
+        const API_BASE = window.location.origin.replace(':8005', ':8004');
+        
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const data = {
+                username: document.getElementById('username').value,
+                password: document.getElementById('password').value
+            };
+            
+            try {
+                const res = await fetch(`${API_BASE}/api/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                if (res.ok) {
+                    const result = await res.json();
+                    // 保存 token
+                    localStorage.setItem('a2ui_token', btoa(JSON.stringify(result)));
+                    
+                    // 跳转到管理后台
+                    window.location.href = 'admin.html';
+                } else {
+                    const err = await res.json();
+                    showToast(err.detail || '登录失败');
+                }
+            } catch (e) {
+                showToast('网络错误');
+            }
+        });
+        
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+    </script>
+</body>
+</html>

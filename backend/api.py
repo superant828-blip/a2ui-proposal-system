@@ -4,24 +4,29 @@
 基于 FastAPI + SQLite
 """
 
-from fastapi import FastAPI, HTTPException, Depends
+from fastapi import FastAPI, HTTPException, Depends, Header
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, field_validator
 from typing import Optional, List
 from datetime import datetime
 import sqlite3
 import os
+import hashlib
 
-app = FastAPI(title="改善提案系统 API", version="1.0.0")
+app = FastAPI(title="改善提案系统 API", version="1.1.0")
 
 # 数据库路径（可从环境变量配置）
 DB_PATH = os.getenv('PROPOSALS_DB_PATH', 
-    DB_PATH)
+    '/home/test/.openclaw/workspace/a2ui-proposal-system/proposals.db')
+
+# 管理员账号（可通过环境变量配置）
+ADMIN_USERNAME = os.getenv('ADMIN_USERNAME', 'admin')
+ADMIN_PASSWORD = os.getenv('ADMIN_PASSWORD', 'admin123')
 
 # 健康检查
 @app.get("/")
 def root():
-    return {"status": "ok", "service": "改善提案系统 API", "version": "1.0.0"}
+    return {"status": "ok", "service": "改善提案系统 API", "version": "1.1.0"}
 
 @app.get("/health")
 def health():
@@ -36,6 +41,10 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# 密码哈希
+def hash_password(password):
+    return hashlib.sha256(password.encode()).hexdigest()
 
 # 数据库初始化
 def init_db():
@@ -81,10 +90,59 @@ def init_db():
     ]
     c.executemany('INSERT OR IGNORE INTO categories (name, color, icon) VALUES (?, ?, ?)', categories)
     
+    # 用户表
+    c.execute('''
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT NOT NULL UNIQUE,
+            password TEXT NOT NULL,
+            role TEXT DEFAULT 'user',
+            display_name TEXT,
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP
+        )
+    ''')
+    
+    # 创建默认管理员
+    c.execute('SELECT id FROM users WHERE username = ?', (ADMIN_USERNAME,))
+    if not c.fetchone():
+        c.execute('INSERT INTO users (username, password, role, display_name) VALUES (?, ?, ?, ?)',
+                  (ADMIN_USERNAME, hash_password(ADMIN_PASSWORD), 'admin', '管理员'))
+    
     conn.commit()
     conn.close()
 
 init_db()
+
+# 简单的 token 验证（生产环境请使用 JWT）
+def verify_token(authorization: str = Header(None)):
+    if not authorization:
+        raise HTTPException(status_code=401, detail="未授权")
+    
+    if not authorization.startswith('Bearer '):
+        raise HTTPException(status_code=401, detail="无效的令牌")
+    
+    token = authorization[7:]
+    
+    # 验证 token 格式: username:role
+    try:
+        username, role = token.split(':')
+        conn = sqlite3.connect(DB_PATH)
+        c = conn.cursor()
+        c.execute('SELECT id, role FROM users WHERE username = ?', (username,))
+        row = c.fetchone()
+        conn.close()
+        
+        if not row or row[1] != role:
+            raise HTTPException(status_code=401, detail="无效的令牌")
+        
+        return {'username': username, 'role': role}
+    except:
+        raise HTTPException(status_code=401, detail="无效的令牌")
+
+def require_admin(user = Depends(verify_token)):
+    if user['role'] != 'admin':
+        raise HTTPException(status_code=403, detail="需要管理员权限")
+    return user
 
 # 数据模型
 class Proposal(BaseModel):
@@ -126,7 +184,127 @@ class ProposalUpdate(BaseModel):
     assignee: Optional[str] = None
     priority: Optional[str] = None
 
-# API 路由
+class UserCreate(BaseModel):
+    username: str
+    password: str
+    role: str = 'user'
+    display_name: Optional[str] = None
+
+class LoginRequest(BaseModel):
+    username: str
+    password: str
+
+# ============ 用户管理 API ============
+
+@app.post("/api/auth/login")
+def login(data: LoginRequest):
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    c = conn.cursor()
+    
+    c.execute('SELECT id, username, password, role, display_name FROM users WHERE username = ?', (data.username,))
+    user = c.fetchone()
+    conn.close()
+    
+    if not user or user['password'] != hash_password(data.password):
+        raise HTTPException(status_code=401, detail="用户名或密码错误")
+    
+    # 生成简单 token
+    token = f"{user['username']}:{user['role']}"
+    
+    return {
+        "token": token,
+        "username": user['username'],
+        "role": user['role'],
+        "display_name": user['display_name']
+    }
+
+@app.get("/api/users")
+def get_users(user = Depends(require_admin)):
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    c = conn.cursor()
+    
+    c.execute('SELECT id, username, role, display_name, created_at FROM users ORDER BY created_at DESC')
+    users = c.fetchall()
+    conn.close()
+    
+    return [dict(row) for row in users]
+
+@app.post("/api/users")
+def create_user(data: UserCreate, user = Depends(require_admin)):
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+    
+    # 检查用户名是否存在
+    c.execute('SELECT id FROM users WHERE username = ?', (data.username,))
+    if c.fetchone():
+        conn.close()
+        raise HTTPException(status_code=400, detail="用户名已存在")
+    
+    c.execute('INSERT INTO users (username, password, role, display_name) VALUES (?, ?, ?, ?)',
+              (data.username, hash_password(data.password), data.role, data.display_name or data.username))
+    
+    user_id = c.lastrowid
+    conn.commit()
+    conn.close()
+    
+    return {"id": user_id, "message": "用户创建成功"}
+
+@app.delete("/api/users/{user_id}")
+def delete_user(user_id: int, user = Depends(require_admin)):
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+    
+    # 不能删除自己
+    c.execute('SELECT username FROM users WHERE id = ?', (user_id,))
+    row = c.fetchone()
+    if row and row[0] == ADMIN_USERNAME:
+        conn.close()
+        raise HTTPException(status_code=400, detail="不能删除管理员账号")
+    
+    c.execute('DELETE FROM users WHERE id = ?', (user_id,))
+    
+    if c.rowcount == 0:
+        conn.close()
+        raise HTTPException(status_code=404, detail="用户不存在")
+    
+    conn.commit()
+    conn.close()
+    
+    return {"message": "删除成功"}
+
+@app.put("/api/users/{user_id}")
+def update_user(user_id: int, data: UserCreate, user = Depends(require_admin)):
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+    
+    # 检查用户是否存在
+    c.execute('SELECT username FROM users WHERE id = ?', (user_id,))
+    if not c.fetchone():
+        conn.close()
+        raise HTTPException(status_code=404, detail="用户不存在")
+    
+    # 检查用户名是否重复
+    c.execute('SELECT id FROM users WHERE username = ? AND id != ?', (data.username, user_id))
+    if c.fetchone():
+        conn.close()
+        raise HTTPException(status_code=400, detail="用户名已存在")
+    
+    c.execute('UPDATE users SET username = ?, role = ?, display_name = ? WHERE id = ?',
+              (data.username, data.role, data.display_name or data.username, user_id))
+    
+    # 如果提供了新密码
+    if data.password:
+        c.execute('UPDATE users SET password = ? WHERE id = ?', (hash_password(data.password), user_id))
+    
+    conn.commit()
+    conn.close()
+    
+    return {"message": "更新成功"}
+
+# ============ 提案 CRUD API ============
+
 @app.post("/api/proposals")
 def create_proposal(proposal: Proposal):
     conn = sqlite3.connect(DB_PATH)
@@ -185,7 +363,7 @@ def get_proposal(proposal_id: int):
     return dict(row)
 
 @app.put("/api/proposals/{proposal_id}")
-def update_proposal(proposal_id: int, update: ProposalUpdate):
+def update_proposal(proposal_id: int, update: ProposalUpdate, user = Depends(verify_token)):
     conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
     
@@ -226,7 +404,7 @@ def update_proposal(proposal_id: int, update: ProposalUpdate):
     return {"message": "更新成功"}
 
 @app.delete("/api/proposals/{proposal_id}")
-def delete_proposal(proposal_id: int):
+def delete_proposal(proposal_id: int, user = Depends(require_admin)):
     conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
     
@@ -240,6 +418,8 @@ def delete_proposal(proposal_id: int):
     conn.close()
     
     return {"message": "删除成功"}
+
+# ============ 统计 API ============
 
 @app.get("/api/stats/overview")
 def get_stats_overview():
@@ -320,6 +500,63 @@ def get_stats_by_month(months: int = 6):
     conn.close()
     
     return [{"month": row[0], "count": row[1]} for row in rows]
+
+@app.get("/api/stats/chart-data")
+def get_chart_data():
+    """获取图表所需的所有数据"""
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    c = conn.cursor()
+    
+    # 按分类统计
+    c.execute('''
+        SELECT category, 
+               COUNT(*) as total,
+               SUM(CASE WHEN status IN ('approved', 'completed') THEN 1 ELSE 0 END) as adopted
+        FROM proposals 
+        GROUP BY category
+    ''')
+    category_data = c.fetchall()
+    
+    # 按状态统计
+    c.execute('SELECT status, COUNT(*) as count FROM proposals GROUP BY status')
+    status_data = c.fetchall()
+    
+    # 按月统计
+    c.execute('''
+        SELECT strftime('%Y-%m', created_at) as month,
+               COUNT(*) as count
+        FROM proposals 
+        WHERE created_at >= date('now', '-6 months')
+        GROUP BY month
+        ORDER BY month
+    ''')
+    month_data = c.fetchall()
+    
+    # 按优先级统计
+    c.execute('SELECT priority, COUNT(*) as count FROM proposals GROUP BY priority')
+    priority_data = c.fetchall()
+    
+    conn.close()
+    
+    return {
+        "by_category": [
+            {"name": row["category"], "total": row["total"], "adopted": row["adopted"]}
+            for row in category_data
+        ],
+        "by_status": [
+            {"name": row["status"], "count": row["count"]}
+            for row in status_data
+        ],
+        "by_month": [
+            {"month": row["month"], "count": row["count"]}
+            for row in month_data
+        ],
+        "by_priority": [
+            {"name": row["priority"], "count": row["count"]}
+            for row in priority_data
+        ]
+    }
 
 @app.get("/api/categories")
 def get_categories():
