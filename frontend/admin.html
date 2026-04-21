@@ -363,6 +363,24 @@
         let currentFilter = '';
         let currentProposal = null;
         
+        // 检查登录状态
+        function checkAuth() {
+            const token = localStorage.getItem('a2ui_token');
+            if (!token) {
+                window.location.href = 'login.html';
+                return null;
+            }
+            try {
+                return JSON.parse(atob(token));
+            } catch {
+                window.location.href = 'login.html';
+                return null;
+            }
+        }
+        
+        // 页面加载时检查
+        checkAuth();
+        
         // Load proposals
         async function loadProposals() {
             try {

@@ -270,6 +270,32 @@
         const API_BASE = window.location.origin.replace(':8005', ':8004');
         let currentUser = null;
         
+        // 检查登录状态
+        function checkAuth() {
+            const token = localStorage.getItem('a2ui_token');
+            if (!token) {
+                window.location.href = 'login.html';
+                return null;
+            }
+            try {
+                const user = JSON.parse(atob(token));
+                if (user.role !== 'admin') {
+                    alert('需要管理员权限');
+                    window.location.href = 'admin.html';
+                    return null;
+                }
+                return user;
+            } catch {
+                window.location.href = 'login.html';
+                return null;
+            }
+        }
+        
+        // 页面加载时检查
+        if (!checkAuth()) {
+            // 已经在 checkAuth 中重定向了
+        }
+        
         // 获取当前登录信息
         function getAuth() {
             const token = localStorage.getItem('a2ui_token');
