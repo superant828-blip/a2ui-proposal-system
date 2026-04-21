@@ -537,10 +537,19 @@
         
         // Update status
         async function updateStatus(id, status) {
+            const token = localStorage.getItem('a2ui_token');
+            if (!token) {
+                showToast('请先登录', 'error');
+                return;
+            }
+            
             try {
                 const res = await fetch(`${API_BASE}/api/proposals/${id}`, {
                     method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${JSON.parse(decodeURIComponent(token)).token}`
+                    },
                     body: JSON.stringify({ status })
                 });
                 
@@ -557,9 +566,16 @@
         async function deleteProposal(id) {
             if (!confirm('确定要删除这个提案吗？')) return;
             
+            const token = localStorage.getItem('a2ui_token');
+            if (!token) {
+                showToast('请先登录', 'error');
+                return;
+            }
+            
             try {
                 const res = await fetch(`${API_BASE}/api/proposals/${id}`, {
-                    method: 'DELETE'
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${JSON.parse(decodeURIComponent(token)).token}` }
                 });
                 
                 if (res.ok) {
