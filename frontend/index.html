@@ -47,14 +47,19 @@
         </div>
         
         <!-- Tab 切换 -->
-        <div class="tabs" style="display:flex;gap:12px;margin-bottom:24px;">
-            <button class="btn btn-primary" onclick="switchTab('submit')">📝 提交提案</button>
-            <button class="btn btn-secondary" onclick="switchTab('list')">📋 我的提案</button>
+        <div style="display:flex;gap:12px;margin-bottom:24px;">
+            <button class="btn btn-primary" id="tab-submit" onclick="switchTab('submit')">📝 提交提案</button>
+            <button class="btn btn-secondary" id="tab-list" onclick="switchTab('list')">📋 提案列表</button>
+            <button class="btn btn-secondary" id="tab-my" onclick="switchTab('my')" style="display:none;">👤 我的提案</button>
         </div>
         
-        <!-- 提交表单 -->
-        <div id="submit-tab" class="tab-content">
+        <!-- 提交表单（无需登录） -->
+        <div id="submit-tab">
             <div class="card">
+                <div style="margin-bottom:16px;padding:12px;background:rgba(59,130,246,0.1);border-radius:8px;">
+                    <span style="color:#3b82f6;">💡 无需登录即可提交提案</span>
+                </div>
+                
                 <form id="proposal-form">
                     <div class="form-group">
                         <label class="form-label">提案标题 *</label>
@@ -71,6 +76,13 @@
                             <option value="环境改善">🏠 环境改善</option>
                             <option value="其他">📌 其他</option>
                         </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">标签</label>
+                        <div id="tag-options" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;">
+                            <!-- 动态加载标签 -->
+                        </div>
                     </div>
                     
                     <div class="form-group">
@@ -98,8 +110,8 @@
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">提交人</label>
-                        <input type="text" id="submitter" class="form-input" placeholder="请输入您的名字">
+                        <label class="form-label">您的姓名（选填）</label>
+                        <input type="text" id="submitter" class="form-input" placeholder="匿名提交">
                     </div>
                     
                     <button type="submit" class="btn btn-primary" style="width:100%;">提交提案</button>
@@ -107,35 +119,112 @@
             </div>
         </div>
         
-        <!-- 提案列表 -->
-        <div id="list-tab" class="tab-content" style="display:none;">
-            <div id="proposal-list">
-                <div class="empty-state">暂无提案，点击"提交提案"创建第一个</div>
+        <!-- 提案列表（无需登录） -->
+        <div id="list-tab" style="display:none;">
+            <div style="margin-bottom:16px;">
+                <input type="text" id="search-input" class="form-input" placeholder="🔍 搜索提案..." style="max-width:300px;" oninput="debounceSearch()">
+                <select id="filter-status" class="form-select" style="max-width:150px;display:inline-block;margin-left:12px;" onchange="loadProposals()">
+                    <option value="">全部状态</option>
+                    <option value="pending">待审核</option>
+                    <option value="reviewing">审核中</option>
+                    <option value="approved">已采纳</option>
+                    <option value="completed">已完成</option>
+                    <option value="rejected">已拒绝</option>
+                </select>
             </div>
+            <div id="proposal-list">
+                <div class="empty-state">加载中...</div>
+            </div>
+        </div>
+        
+        <!-- 我的提案（需要登录） -->
+        <div id="my-tab" style="display:none;">
+            <div class="empty-state">请先登录查看我的提案</div>
         </div>
     </div>
     
     <script src="js/utils.js"></script>
     <script>
+        let currentTab = 'submit';
+        let searchTimeout = null;
+        
+        // 检查登录状态
+        function checkLogin() {
+            const user = parseToken();
+            const myTab = document.getElementById('tab-my');
+            const loginBtn = document.getElementById('login-btn');
+            const logoutBtn = document.getElementById('logout-btn');
+            const userDisplay = document.getElementById('user-display');
+            
+            if (user) {
+                if (myTab) myTab.style.display = 'inline-flex';
+                if (loginBtn) loginBtn.style.display = 'none';
+                if (logoutBtn) logoutBtn.style.display = 'inline-block';
+                if (userDisplay) userDisplay.textContent = user.display_name || user.username;
+                return true;
+            } else {
+                if (myTab) myTab.style.display = 'none';
+                if (loginBtn) loginBtn.style.display = 'inline-block';
+                if (logoutBtn) logoutBtn.style.display = 'none';
+                return false;
+            }
+        }
+        
         // Tab 切换
         function switchTab(tab) {
-            document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
-            document.querySelectorAll('.tabs .btn').forEach(btn => {
-                btn.classList.remove('btn-primary');
-                btn.classList.add('btn-secondary');
-            });
+            currentTab = tab;
             
-            document.getElementById(tab + '-tab').style.display = 'block';
-            event.target.classList.remove('btn-secondary');
-            event.target.classList.add('btn-primary');
+            document.getElementById('submit-tab').style.display = tab === 'submit' ? 'block' : 'none';
+            document.getElementById('list-tab').style.display = tab === 'list' ? 'block' : 'none';
+            document.getElementById('my-tab').style.display = tab === 'my' ? 'block' : 'none';
             
-            if (tab === 'list') loadProposals();
+            document.getElementById('tab-submit').className = tab === 'submit' ? 'btn btn-primary' : 'btn btn-secondary';
+            document.getElementById('tab-list').className = tab === 'list' ? 'btn btn-primary' : 'btn btn-secondary';
+            document.getElementById('tab-my').className = tab === 'my' ? 'btn btn-primary' : 'btn btn-secondary';
+            
+            if (tab === 'list') {
+                loadProposals();
+            } else if (tab === 'my') {
+                if (checkLogin()) {
+                    loadMyProposals();
+                }
+            }
+            
+            // 未登录时跳转到列表
+            if (tab === 'my' && !parseToken()) {
+                switchTab('list');
+                showToast('查看我的提案需要先登录', 'error');
+            }
+        }
+        
+        // 防抖搜索
+        function debounceSearch() {
+            if (searchTimeout) clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(loadProposals, 500);
+        }
+        
+        // 加载标签
+        async function loadTags() {
+            try {
+                const res = await fetch(`${API_BASE}/api/tags`);
+                const tags = await res.json();
+                const container = document.getElementById('tag-options');
+                container.innerHTML = tags.map(t => `
+                    <label style="display:flex;align-items:center;gap:4px;padding:4px 8px;background:${t.color}22;border-radius:4px;cursor:pointer;">
+                        <input type="checkbox" name="tags" value="${t.name}" style="accent-color:${t.color}">
+                        <span style="color:${t.color};font-size:12px;">${t.name}</span>
+                    </label>
+                `).join('');
+            } catch (e) {
+                console.error('加载标签失败:', e);
+            }
         }
         
         // 加载统计
         async function loadStats() {
             try {
-                const data = await apiGet('/api/stats/overview');
+                const res = await fetch(`${API_BASE}/api/stats/overview`);
+                const data = await res.json();
                 document.getElementById('stat-total').textContent = data.total || 0;
                 document.getElementById('stat-reviewing').textContent = data.reviewing || 0;
                 document.getElementById('stat-approved').textContent = data.approved || 0;
@@ -145,11 +234,19 @@
             }
         }
         
-        // 加载提案列表
+        // 加载提案列表（无需登录）
         async function loadProposals() {
             const list = document.getElementById('proposal-list');
+            const search = document.getElementById('search-input')?.value || '';
+            const status = document.getElementById('filter-status')?.value || '';
+            
             try {
-                const proposals = await apiGet('/api/proposals');
+                let url = `${API_BASE}/api/proposals?limit=50`;
+                if (search) url += `&search=${encodeURIComponent(search)}`;
+                if (status) url += `&status=${encodeURIComponent(status)}`;
+                
+                const res = await fetch(url);
+                const proposals = await res.json();
                 
                 if (proposals.length === 0) {
                     list.innerHTML = '<div class="empty-state">暂无提案</div>';
@@ -158,15 +255,59 @@
                 
                 list.innerHTML = proposals.map(p => `
                     <div class="card" style="margin-bottom:12px;">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:8px;">
+                            <span style="font-weight:600;font-size:16px;">${escapeHtml(p.title)}</span>
+                            <div style="display:flex;gap:8px;align-items:center;">
+                                ${p.sentiment ? `<span class="badge badge-${p.sentiment === 'positive' ? 'completed' : p.sentiment === 'negative' ? 'rejected' : 'pending'}">${p.sentiment === 'positive' ? '😊' : p.sentiment === 'negative' ? '😔' : '😐'}</span>` : ''}
+                                ${p.score > 0 ? `<span style="color:#f59e0b;font-size:12px;">⭐${p.score}</span>` : ''}
+                                <span class="badge badge-${p.status}">${getStatusText(p.status)}</span>
+                            </div>
+                        </div>
+                        <p style="color:var(--color-text-secondary);font-size:14px;margin-bottom:8px;line-height:1.5;">${escapeHtml(p.problem_desc || '').substring(0, 200)}${p.problem_desc?.length > 200 ? '...' : ''}</p>
+                        <div style="color:var(--color-text-muted);font-size:12px;display:flex;gap:12px;flex-wrap:wrap;">
+                            <span>📁 ${p.category}</span>
+                            ${p.tags && p.tags.length ? `<span>🏷️ ${p.tags.join(', ')}</span>` : ''}
+                            <span>💬 ${p.comment_count || 0}</span>
+                            <span>📎 ${p.attachment_count || 0}</span>
+                            <span>📅 ${formatDate(p.created_at)}</span>
+                            <span>👤 ${p.submitter || '匿名'}</span>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (e) {
+                list.innerHTML = '<div class="empty-state">加载失败</div>';
+            }
+        }
+        
+        // 加载我的提案（需要登录）
+        async function loadMyProposals() {
+            const user = parseToken();
+            if (!user) return;
+            
+            const list = document.getElementById('my-tab');
+            try {
+                const res = await fetch(`${API_BASE}/api/proposals?search=${encodeURIComponent(user.username)}`);
+                const proposals = await res.json();
+                
+                // 只显示自己提交的
+                const myProposals = proposals.filter(p => p.submitter === user.username || p.submitter === user.display_name);
+                
+                if (myProposals.length === 0) {
+                    list.innerHTML = '<div class="empty-state">您还没有提交过提案</div>';
+                    return;
+                }
+                
+                list.innerHTML = myProposals.map(p => `
+                    <div class="card" style="margin-bottom:12px;">
                         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
                             <span style="font-weight:600;">${escapeHtml(p.title)}</span>
                             <span class="badge badge-${p.status}">${getStatusText(p.status)}</span>
                         </div>
                         <p style="color:var(--color-text-secondary);font-size:14px;margin-bottom:8px;">${escapeHtml(p.problem_desc || '')}</p>
                         <div style="color:var(--color-text-muted);font-size:12px;">
-                            <span class="badge badge-normal">${p.category}</span>
-                            ${p.priority !== 'normal' ? `<span class="badge badge-${p.priority}">${p.priority === 'high' ? '高优先' : '低优先'}</span>` : ''}
-                            <span>提交于 ${formatDate(p.created_at)} · ${p.submitter || '匿名'}</span>
+                            <span>📁 ${p.category}</span>
+                            <span>⭐ 评分: ${p.score || 0}</span>
+                            <span>📅 ${formatDate(p.created_at)}</span>
                         </div>
                     </div>
                 `).join('');
@@ -179,6 +320,9 @@
         document.getElementById('proposal-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             
+            // 获取选中的标签
+            const selectedTags = Array.from(document.querySelectorAll('input[name="tags"]:checked')).map(cb => cb.value);
+            
             const data = {
                 title: document.getElementById('title').value,
                 category: document.getElementById('category').value,
@@ -186,22 +330,35 @@
                 solution: document.getElementById('solution').value,
                 expected_effect: document.getElementById('expected_effect').value,
                 priority: document.getElementById('priority').value,
-                submitter: document.getElementById('submitter').value || '匿名'
+                submitter: document.getElementById('submitter').value || '匿名',
+                tags: selectedTags
             };
             
             try {
-                await apiPost('/api/proposals', data);
-                showToast('提案提交成功！');
-                e.target.reset();
-                loadStats();
-                switchTab('list');
+                const res = await fetch(`${API_BASE}/api/proposals`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                if (res.ok) {
+                    showToast('提案提交成功！感谢您的参与 💡');
+                    e.target.reset();
+                    loadStats();
+                    switchTab('list');
+                } else {
+                    const err = await res.json();
+                    showToast(err.detail || '提交失败', 'error');
+                }
             } catch (e) {
-                showToast(e.message || '提交失败', 'error');
+                showToast('网络错误，请稍后重试', 'error');
             }
         });
         
         // 初始化
+        checkLogin();
         loadStats();
+        loadTags();
     </script>
 </body>
 </html>
