@@ -195,6 +195,21 @@
             
             document.getElementById('modal-title').textContent = currentProposal.title;
             
+            // 更新处理按钮文字
+            const actionBtn = document.getElementById('modal-action-btn');
+            if (currentProposal.status === 'pending') {
+                actionBtn.textContent = '开始审核';
+                actionBtn.style.display = 'inline-block';
+            } else if (currentProposal.status === 'reviewing') {
+                actionBtn.textContent = '采纳提案';
+                actionBtn.style.display = 'inline-block';
+            } else if (currentProposal.status === 'approved') {
+                actionBtn.textContent = '标记完成';
+                actionBtn.style.display = 'inline-block';
+            } else {
+                actionBtn.style.display = 'none';
+            }
+            
             let content = `
                 <div style="margin-bottom:16px;">
                     <p><strong>分类：</strong>${currentProposal.category}</p>
@@ -233,6 +248,33 @@
         function closeDetailModal() {
             document.getElementById('detail-modal').classList.remove('active');
         }
+        
+        // 处理提案（状态流转）
+        function doAction() {
+            if (!currentProposal) return;
+            
+            const status = currentProposal.status;
+            let newStatus = '';
+            
+            if (status === 'pending') {
+                newStatus = 'reviewing';
+            } else if (status === 'reviewing') {
+                newStatus = 'approved';
+            } else if (status === 'approved') {
+                newStatus = 'completed';
+            } else {
+                showToast('当前状态无法处理', 'error');
+                return;
+            }
+            
+            updateStatus(currentProposal.id, newStatus);
+            closeDetailModal();
+        }
+        
+        // 页面加载后绑定处理按钮事件
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('modal-action-btn').addEventListener('click', doAction);
+        });
         
         // 添加评论
         async function addComment(proposalId) {
