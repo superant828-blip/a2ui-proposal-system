@@ -137,11 +137,6 @@
         }
         initUserDisplay();
         
-        // 自动登出
-        let idleTime = 0;
-        setInterval(() => { idleTime++; if (idleTime >= 10) { if (confirm('长时间未操作，是否继续？')) { idleTime = 0; } else { logout(); } } }, 60000);
-        document.addEventListener('click', () => idleTime = 0);
-        document.addEventListener('keypress', () => idleTime = 0);
         
         // Tab 切换
         function switchAdminTab(tab) {
